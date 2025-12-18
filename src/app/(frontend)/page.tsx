@@ -1,8 +1,12 @@
 import Link from 'next/link'
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen">
+    <>
+      <Header currentLocale="fr" />
+      <main className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center bg-gradient-to-br from-primary to-primary/80">
         <div className="absolute inset-0 bg-black/20"></div>
@@ -133,6 +137,8 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
-    </div>
+      </main>
+      <Footer />
+    </>
   )
 }

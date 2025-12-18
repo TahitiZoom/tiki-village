@@ -1,5 +1,5 @@
 import { buildConfig } from 'payload'
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
@@ -57,8 +57,10 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: mongooseAdapter({
-    url: process.env.DATABASE_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/tiki-village',
+  db: postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || '',
+    },
   }),
   plugins: [
     vercelBlobStorage({

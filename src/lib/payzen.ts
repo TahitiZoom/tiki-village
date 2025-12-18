@@ -161,14 +161,4 @@ export async function getPayZenPaymentStatus(transactionId: string) {
   }
 }
 
-/**
- * Format price for display (XPF)
- */
-export function formatXPF(amount: number): string {
-  return new Intl.NumberFormat('fr-PF', {
-    style: 'currency',
-    currency: 'XPF',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount)
-}
+

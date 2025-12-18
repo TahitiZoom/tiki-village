@@ -122,7 +122,9 @@ export function slugify(text: string): string {
  * Get day name in French
  */
 export function getDayName(dayIndex: number, locale: string = 'fr-FR'): string {
-  const date = new Date(2024, 0, dayIndex + 1) // January 2024 starts on Monday
+  // dayIndex: 0 = Sunday, 1 = Monday, etc.
+  // Create date for a week starting on Sunday (Jan 7, 2024)
+  const date = new Date(2024, 0, 7 + dayIndex)
   return date.toLocaleDateString(locale, { weekday: 'long' })
 }
 

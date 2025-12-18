@@ -10,7 +10,7 @@
     "DATABASE_URI": "@database-uri",
     "NEXT_PUBLIC_SERVER_URL": "@next-public-server-url",
     "PAYZEN_SHOP_ID": "@payzen-shop-id",
-    "PAYZEN_MODE": "PRODUCTION",
+    "PAYZEN_MODE": "@payzen-mode",
     "PAYZEN_PROD_KEY": "@payzen-prod-key",
     "PAYZEN_HMAC_PROD_KEY": "@payzen-hmac-prod-key",
     "PAYZEN_PUBLIC_PROD_KEY": "@payzen-public-prod-key",

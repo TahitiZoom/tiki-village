@@ -11,7 +11,7 @@
     "generate:types": "cross-env NODE_OPTIONS=\"${NODE_OPTIONS} --no-deprecation\" payload generate:types"
   },
   "dependencies": {
-    "@payloadcms/db-mongodb": "3.14.0",
+    "@payloadcms/db-postgres": "3.14.0",
     "@payloadcms/next": "3.14.0",
     "@payloadcms/richtext-lexical": "3.14.0",
     "@payloadcms/storage-vercel-blob": "3.14.0",

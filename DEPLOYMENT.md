@@ -79,7 +79,7 @@ vercel link
 ```bash
 vercel env add MONGODB_URI
 vercel env add DATABASE_URI
-vercel env add PAYLOAD_SECRET
+vercel env add PAYLOAD_KEY
 vercel env add NEXT_PUBLIC_SERVER_URL
 vercel env add PAYZEN_SHOP_ID
 vercel env add PAYZEN_MODE
@@ -112,7 +112,7 @@ vercel --prod
 ```
 MONGODB_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tiki-village
 DATABASE_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tiki-village
-PAYLOAD_SECRET=your-very-secure-random-string-here
+PAYLOAD_KEY=your-very-secure-random-string-here
 NEXT_PUBLIC_SERVER_URL=https://your-domain.vercel.app
 PAYZEN_SHOP_ID=your-shop-id
 PAYZEN_MODE=PRODUCTION
@@ -241,7 +241,7 @@ npm audit fix
 
 ## Security Checklist
 
-- [ ] Use strong `PAYLOAD_SECRET` (32+ characters)
+- [ ] Use strong `PAYLOAD_KEY` (32+ characters)
 - [ ] Enable 2FA on Vercel account
 - [ ] Restrict MongoDB network access if possible
 - [ ] Use production PayZen credentials only in production

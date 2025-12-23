@@ -6,7 +6,7 @@
   "framework": "nextjs",
   "regions": ["sfo1"],
   "env": {
-    "PAYLOAD_SECRET": "@payload-secret",
+    "PAYLOAD_KEY": "@payload-secret",
     "DATABASE_URI": "@database-uri",
     "NEXT_PUBLIC_SERVER_URL": "@next-public-server-url",
     "PAYZEN_SHOP_ID": "@payzen-shop-id",

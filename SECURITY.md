@@ -38,7 +38,7 @@ Payment processing uses PayZen/OSB (Lyra Network):
 Critical environment variables must be kept secure:
 
 **Never commit these to version control:**
-- `PAYLOAD_SECRET` - Used for session encryption
+- `PAYLOAD_KEY` - Used for session encryption
 - `PAYZEN_*_KEY` - Payment gateway credentials
 - `MONGODB_URI` - Database connection string
 - `BLOB_READ_WRITE_TOKEN` - Media storage token
@@ -204,7 +204,7 @@ Before deploying to production:
 
 - [ ] All environment variables set
 - [ ] HTTPS enabled
-- [ ] Strong `PAYLOAD_SECRET` generated
+- [ ] Strong `PAYLOAD_KEY` generated
 - [ ] Database access restricted
 - [ ] PayZen credentials verified
 - [ ] Webhook signatures working

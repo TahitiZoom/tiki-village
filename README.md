@@ -119,7 +119,7 @@ cp .env.example .env
 
 Required variables:
 - `MONGODB_URI` - MongoDB connection string
-- `PAYLOAD_SECRET` - Random secret key for Payload
+- `PAYLOAD_KEY` - Random secret key for Payload
 - `NEXT_PUBLIC_SERVER_URL` - Your site URL
 - `PAYZEN_*` - PayZen credentials (contact OSB for details)
 

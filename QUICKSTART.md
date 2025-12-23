@@ -31,7 +31,7 @@ Edit `.env` and add your configuration:
 ```env
 # Minimum required for local development:
 MONGODB_URI=mongodb://localhost:27017/tiki-village
-PAYLOAD_SECRET=your-secret-key-minimum-32-characters
+PAYLOAD_KEY=your-secret-key-minimum-32-characters
 NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 ```
 

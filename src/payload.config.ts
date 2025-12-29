@@ -53,7 +53,7 @@ export default buildConfig({
     SiteSettings,
   ],
   editor: lexicalEditor({}),
-  secret: process.env.PAYLOAD_KEY || 'your-secret-key',
+  secret: process.env.PAYLOAD_KEY || 'tikivillage2025polynesiekey987654321',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

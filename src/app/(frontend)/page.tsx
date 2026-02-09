@@ -54,7 +54,7 @@ export default function HomePage() {
                 <p className="text-2xl font-bold text-accent mb-4">
                   À partir de 3 500 XPF
                 </p>
-                <Link href="/services/ateliers" className="text-accent hover:underline">
+                <Link href="/services/atelier-culturel-1" className="text-accent hover:underline">
                   En savoir plus →
                 </Link>
               </div>

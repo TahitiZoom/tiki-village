@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import payload from 'payload'
+import { getPayload } from 'payload'
 import sharp from 'sharp'
 import config from '@/payload.config'
 
@@ -60,23 +60,13 @@ const createPlaceholderImage = async () => {
     .toBuffer()
 }
 
-let initPromise: Promise<unknown> | null = null
-
-const initPayload = async () => {
-  if (!initPromise) {
-    initPromise = payload.init({
-      config,
-    })
-  }
-  await initPromise
-}
-
 const upsertByField = async <T extends { id: string }>(
   collection: string,
   field: string,
   value: string,
   data: Record<string, unknown>
 ) => {
+  const payload = await getPayload({ config })
   const existing = await payload.find({
     collection,
     where: {
@@ -106,6 +96,7 @@ const upsertByField = async <T extends { id: string }>(
 
 const ensureMedia = async (slug: string, alt: { fr: string; en: string; ja: string }) => {
   const filename = `${slug}.jpg`
+  const payload = await getPayload({ config })
   const existing = await payload.find({
     collection: 'media',
     where: {
@@ -145,7 +136,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  await initPayload()
+  try {
 
   const results: Record<string, number> = {
     categories: 0,
@@ -622,8 +613,12 @@ export async function POST(request: Request) {
     results.promotions += 1
   }
 
-  return NextResponse.json({
-    ok: true,
-    results,
-  })
+    return NextResponse.json({
+      ok: true,
+      results,
+    })
+  } catch (error) {
+    console.error('Seed error:', error)
+    return NextResponse.json({ error: 'Seed failed' }, { status: 500 })
+  }
 }

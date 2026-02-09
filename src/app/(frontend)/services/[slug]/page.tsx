@@ -199,7 +199,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 
                   {product.bookable && (
                     <Link
-                      href={`/contact?service=${product.slug}`}
+                      href={`/booking?service=${product.slug}`}
                       className="block w-full bg-accent text-white py-4 rounded-lg font-semibold text-center hover:bg-accent/90 transition-colors mb-4"
                     >
                       Réserver

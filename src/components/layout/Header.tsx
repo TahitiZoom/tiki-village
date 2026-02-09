@@ -123,14 +123,17 @@ export default function Header({ currentLocale = 'fr' }: HeaderProps) {
                 {langMenuOpen && (
                   <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2">
                     {languages.map((lang) => (
-                      <a
+                      <button
                         key={lang.code}
-                        href={`/${lang.code}`}
-                        className="block px-4 py-2 text-primary hover:bg-sand hover:text-accent transition-colors flex items-center space-x-2"
+                        onClick={() => {
+                          // Language switching functionality to be implemented
+                          setLangMenuOpen(false)
+                        }}
+                        className="block w-full text-left px-4 py-2 text-primary hover:bg-sand hover:text-accent transition-colors flex items-center space-x-2 cursor-pointer"
                       >
                         <span>{lang.flag}</span>
                         <span>{lang.label}</span>
-                      </a>
+                      </button>
                     ))}
                   </div>
                 )}

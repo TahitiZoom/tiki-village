@@ -130,7 +130,7 @@ export default function BookingForm() {
 
         <ParticipantSelector
           adults={adults}
-          children={children}
+          childrenCount={children}
           onAdultsChange={setAdults}
           onChildrenChange={setChildren}
           childrenAllowed={selectedProduct?.childrenAllowed}

@@ -45,7 +45,7 @@ const makeRichText = (value: { fr: string; en: string; ja: string }) => {
   }
 }
 
-const createPlaceholderImage = async (label: string) => {
+const createPlaceholderImage = async () => {
   const width = 1200
   const height = 800
   return sharp({
@@ -121,7 +121,7 @@ const ensureMedia = async (slug: string, alt: { fr: string; en: string; ja: stri
     return existing.docs[0]
   }
 
-  const buffer = await createPlaceholderImage(slug)
+  const buffer = await createPlaceholderImage()
 
   return payload.create({
     collection: 'media',

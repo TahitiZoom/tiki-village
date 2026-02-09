@@ -2,7 +2,7 @@
 
 interface ParticipantSelectorProps {
   adults: number
-  children: number
+  childrenCount: number
   onAdultsChange: (count: number) => void
   onChildrenChange: (count: number) => void
   childrenAllowed?: boolean
@@ -13,7 +13,7 @@ interface ParticipantSelectorProps {
 
 export default function ParticipantSelector({
   adults,
-  children,
+  childrenCount,
   onAdultsChange,
   onChildrenChange,
   childrenAllowed = true,
@@ -30,7 +30,7 @@ export default function ParticipantSelector({
     }).format(amount)
   }
 
-  const totalParticipants = adults + children
+  const totalParticipants = adults + childrenCount
   const canAddMore = !maxParticipants || totalParticipants < maxParticipants
 
   const handleIncrement = (type: 'adults' | 'children') => {
@@ -39,15 +39,15 @@ export default function ParticipantSelector({
     if (type === 'adults') {
       onAdultsChange(adults + 1)
     } else {
-      onChildrenChange(children + 1)
+      onChildrenChange(childrenCount + 1)
     }
   }
 
   const handleDecrement = (type: 'adults' | 'children') => {
     if (type === 'adults' && adults > 1) {
       onAdultsChange(adults - 1)
-    } else if (type === 'children' && children > 0) {
-      onChildrenChange(children - 1)
+    } else if (type === 'children' && childrenCount > 0) {
+      onChildrenChange(childrenCount - 1)
     }
   }
 
@@ -104,14 +104,14 @@ export default function ParticipantSelector({
           <div className="flex items-center space-x-3">
             <button
               onClick={() => handleDecrement('children')}
-              disabled={children <= 0}
+              disabled={childrenCount <= 0}
               className="w-10 h-10 rounded-full border-2 border-accent text-accent disabled:border-gray-300 disabled:text-gray-300 hover:bg-accent hover:text-white transition-colors disabled:hover:bg-transparent disabled:hover:text-gray-300 font-bold text-lg"
             >
               −
             </button>
             
             <span className="w-12 text-center font-bold text-lg text-primary">
-              {children}
+              {childrenCount}
             </span>
             
             <button

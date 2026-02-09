@@ -8,18 +8,18 @@ interface HeaderProps {
   currentLocale?: string
 }
 
+const languages = [
+  { code: 'fr', label: 'Français', flag: '🇫🇷' },
+  { code: 'en', label: 'English', flag: '🇬🇧' },
+  { code: 'ja', label: '日本語', flag: '🇯🇵' },
+]
+
 export default function Header({ currentLocale = 'fr' }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [langMenuOpen, setLangMenuOpen] = useState(false)
   const [activeLocale, setActiveLocale] = useState(currentLocale)
   const pathname = usePathname()
   const searchParams = useSearchParams()
-
-  const languages = [
-    { code: 'fr', label: 'Français', flag: '🇫🇷' },
-    { code: 'en', label: 'English', flag: '🇬🇧' },
-    { code: 'ja', label: '日本語', flag: '🇯🇵' },
-  ]
 
   useEffect(() => {
     const match = document.cookie.match(/(?:^|; )tv_locale=([^;]+)/)

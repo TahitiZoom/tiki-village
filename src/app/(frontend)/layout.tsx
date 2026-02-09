@@ -7,12 +7,12 @@ export const metadata: Metadata = {
   description: 'Découvrez la culture polynésienne authentique à Tiki Village',
 }
 
-export default function FrontendLayout({
+export default async function FrontendLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const requestHeaders = headers()
+  const requestHeaders = await headers()
   const locale = requestHeaders.get('x-locale') || 'fr'
 
   return (

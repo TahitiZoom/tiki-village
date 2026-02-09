@@ -95,38 +95,43 @@ const upsertByField = async <T extends { id: string }>(
 }
 
 const ensureMedia = async (slug: string, alt: { fr: string; en: string; ja: string }) => {
-  const filename = `${slug}.jpg`
-  const payload = await getPayload({ config })
-  const existing = await payload.find({
-    collection: 'media',
-    where: {
-      filename: {
-        equals: filename,
+  try {
+    const filename = `${slug}.jpg`
+    const payload = await getPayload({ config })
+    const existing = await payload.find({
+      collection: 'media',
+      where: {
+        filename: {
+          equals: filename,
+        },
       },
-    },
-    limit: 1,
-    overrideAccess: true,
-  })
+      limit: 1,
+      overrideAccess: true,
+    })
 
-  if (existing.docs.length > 0) {
-    return existing.docs[0]
+    if (existing.docs.length > 0) {
+      return existing.docs[0]
+    }
+
+    const buffer = await createPlaceholderImage()
+
+    return payload.create({
+      collection: 'media',
+      data: {
+        alt,
+      },
+      file: {
+        data: buffer,
+        mimetype: 'image/jpeg',
+        name: filename,
+        size: buffer.length,
+      },
+      overrideAccess: true,
+    })
+  } catch (error) {
+    console.error('Seed media error:', error)
+    throw error
   }
-
-  const buffer = await createPlaceholderImage()
-
-  return payload.create({
-    collection: 'media',
-    data: {
-      alt,
-    },
-    file: {
-      data: buffer,
-      mimetype: 'image/jpeg',
-      name: filename,
-      size: buffer.length,
-    },
-    overrideAccess: true,
-  })
 }
 
 export async function POST(request: Request) {
@@ -618,7 +623,8 @@ export async function POST(request: Request) {
       results,
     })
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
     console.error('Seed error:', error)
-    return NextResponse.json({ error: 'Seed failed' }, { status: 500 })
+    return NextResponse.json({ error: 'Seed failed', message }, { status: 500 })
   }
 }

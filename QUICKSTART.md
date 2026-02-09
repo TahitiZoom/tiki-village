@@ -5,7 +5,7 @@ Get up and running with Tiki Village in 5 minutes!
 ## Prerequisites
 
 - Node.js 18+ installed
-- MongoDB running locally or MongoDB Atlas account
+- PostgreSQL database (local, Vercel Postgres, Neon, or Supabase)
 - Git installed
 
 ## 1. Clone & Install
@@ -30,31 +30,37 @@ Edit `.env` and add your configuration:
 
 ```env
 # Minimum required for local development:
-MONGODB_URI=mongodb://localhost:27017/tiki-village
-PAYLOAD_KEY=your-secret-key-minimum-32-characters
+DATABASE_URL=postgresql://user:password@localhost:5432/tiki_village
+PAYLOAD_SECRET=your-secret-key-minimum-32-characters
 NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 ```
 
-### Option A: Local MongoDB
+### Option A: Local PostgreSQL
 
-Install MongoDB locally:
+Install PostgreSQL locally:
 ```bash
 # macOS
-brew install mongodb-community
+brew install postgresql && brew services start postgresql
 
 # Ubuntu/Debian
-sudo apt-get install mongodb
+sudo apt-get install postgresql postgresql-contrib
+sudo systemctl start postgresql
 
-# Start MongoDB
-mongod
+# Create database
+createdb tiki_village
 ```
 
-### Option B: MongoDB Atlas (Recommended)
+Or use Docker:
+```bash
+docker run --name postgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=tiki_village -p 5432:5432 -d postgres:16
+```
 
-1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Create free cluster
-3. Get connection string
-4. Update `MONGODB_URI` in `.env`
+### Option B: Vercel Postgres / Neon / Supabase (Recommended for production)
+
+1. Go to [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres), [Neon](https://neon.tech), or [Supabase](https://supabase.com)
+2. Create a new PostgreSQL database
+3. Get the connection string
+4. Update `DATABASE_URL` in `.env`
 
 ## 3. Start Development Server
 
@@ -182,14 +188,15 @@ tiki-village/
 
 ## Troubleshooting
 
-### MongoDB Connection Error
+### PostgreSQL Connection Error
 
-**Error:** `MongoServerError: connection refused`
+**Error:** `ECONNREFUSED` or `connection refused`
 
 **Solution:**
-- Check MongoDB is running: `mongosh`
-- Verify `MONGODB_URI` in `.env`
-- Try `mongodb://127.0.0.1:27017/tiki-village` instead
+- Check PostgreSQL is running: `pg_isready`
+- Verify `DATABASE_URL` in `.env`
+- Try `postgresql://user:password@127.0.0.1:5432/tiki_village` instead
+- Ensure the database exists: `psql -l`
 
 ### Port 3000 Already in Use
 

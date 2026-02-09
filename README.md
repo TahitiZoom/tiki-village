@@ -93,7 +93,7 @@ tiki-village/
 
 ### Prerequisites
 - Node.js 18+ 
-- MongoDB database (local or Atlas)
+- PostgreSQL database (local, Vercel Postgres, Neon, or Supabase)
 - PayZen/OSB account (for payment processing)
 
 ### Setup
@@ -118,8 +118,8 @@ cp .env.example .env
 ```
 
 Required variables:
-- `MONGODB_URI` - MongoDB connection string
-- `PAYLOAD_KEY` - Random secret key for Payload
+- `DATABASE_URL` - PostgreSQL connection string
+- `PAYLOAD_SECRET` - Random secret key for Payload
 - `NEXT_PUBLIC_SERVER_URL` - Your site URL
 - `PAYZEN_*` - PayZen credentials (contact OSB for details)
 
@@ -247,7 +247,7 @@ Add all environment variables from `.env` to your Vercel project settings.
 
 3. **Configure database**
 
-Use MongoDB Atlas or another hosted MongoDB service. Update `DATABASE_URI` in Vercel.
+Use Vercel Postgres, Neon, Supabase, or another hosted PostgreSQL service. Update `DATABASE_URL` in Vercel.
 
 4. **Configure Vercel Blob Storage**
 
@@ -260,11 +260,11 @@ vercel --prod
 
 ### Database Setup
 
-For production, use MongoDB Atlas:
-1. Create a cluster at https://www.mongodb.com/cloud/atlas
-2. Configure network access (allow Vercel IPs)
-3. Create database user
-4. Get connection string and add to `DATABASE_URI`
+For production, use Vercel Postgres, Neon, or Supabase:
+1. Create a PostgreSQL database at your chosen provider
+2. Configure network access (allow Vercel IPs if needed)
+3. Create database user with appropriate permissions
+4. Get connection string and add to `DATABASE_URL`
 
 ## 📚 API Documentation
 

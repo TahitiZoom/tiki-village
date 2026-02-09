@@ -27,6 +27,7 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+  secret: process.env.PAYLOAD_SECRET || '',
   admin: {
     user: Users.slug,
     meta: {

@@ -60,7 +60,7 @@ const createPlaceholderImage = async () => {
     .toBuffer()
 }
 
-let initPromise: Promise<void> | null = null
+let initPromise: Promise<unknown> | null = null
 
 const initPayload = async () => {
   if (!initPromise) {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import '../globals.css'
 
 export const metadata: Metadata = {
@@ -11,8 +12,11 @@ export default function FrontendLayout({
 }: {
   children: React.ReactNode
 }) {
+  const requestHeaders = headers()
+  const locale = requestHeaders.get('x-locale') || 'fr'
+
   return (
-    <html lang="fr">
+    <html lang={locale}>
       <body>{children}</body>
     </html>
   )

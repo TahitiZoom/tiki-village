@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
 
 interface HeaderProps {
   currentLocale?: string
@@ -10,12 +11,37 @@ interface HeaderProps {
 export default function Header({ currentLocale = 'fr' }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [langMenuOpen, setLangMenuOpen] = useState(false)
+  const [activeLocale, setActiveLocale] = useState(currentLocale)
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   const languages = [
     { code: 'fr', label: 'Français', flag: '🇫🇷' },
     { code: 'en', label: 'English', flag: '🇬🇧' },
     { code: 'ja', label: '日本語', flag: '🇯🇵' },
   ]
+
+  useEffect(() => {
+    const match = document.cookie.match(/(?:^|; )tv_locale=([^;]+)/)
+    if (match?.[1]) {
+      setActiveLocale(match[1])
+    }
+  }, [])
+
+  const localeLinks = useMemo(() => {
+    const localeCodes = languages.map((lang) => lang.code)
+    const parts = pathname.split('/').filter(Boolean)
+    const hasLocale = parts.length > 0 && localeCodes.includes(parts[0])
+    const baseParts = hasLocale ? parts.slice(1) : parts
+    const basePath = `/${baseParts.join('/')}` || '/'
+    const queryString = searchParams.toString()
+
+    return languages.reduce<Record<string, string>>((acc, lang) => {
+      const localizedPath = `/${lang.code}${basePath === '/' ? '' : basePath}`
+      acc[lang.code] = queryString ? `${localizedPath}?${queryString}` : localizedPath
+      return acc
+    }, {})
+  }, [pathname, searchParams])
 
   const navigation = [
     { name: 'Accueil', href: '/' },
@@ -117,23 +143,21 @@ export default function Header({ currentLocale = 'fr' }: HeaderProps) {
                   onClick={() => setLangMenuOpen(!langMenuOpen)}
                   className="flex items-center space-x-2 text-primary hover:text-accent transition-colors"
                 >
-                  <span>{languages.find(l => l.code === currentLocale)?.flag}</span>
-                  <span className="hidden sm:inline">{languages.find(l => l.code === currentLocale)?.code.toUpperCase()}</span>
+                  <span>{languages.find(l => l.code === activeLocale)?.flag}</span>
+                  <span className="hidden sm:inline">{languages.find(l => l.code === activeLocale)?.code.toUpperCase()}</span>
                 </button>
                 {langMenuOpen && (
                   <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2">
                     {languages.map((lang) => (
-                      <button
+                      <Link
                         key={lang.code}
-                        onClick={() => {
-                          // Language switching functionality to be implemented
-                          setLangMenuOpen(false)
-                        }}
+                        href={localeLinks[lang.code]}
+                        onClick={() => setLangMenuOpen(false)}
                         className="block w-full text-left px-4 py-2 text-primary hover:bg-sand hover:text-accent transition-colors flex items-center space-x-2 cursor-pointer"
                       >
                         <span>{lang.flag}</span>
                         <span>{lang.label}</span>
-                      </button>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -145,7 +169,7 @@ export default function Header({ currentLocale = 'fr' }: HeaderProps) {
               </Link>
 
               {/* Cart */}
-              <Link href="/cart" className="relative text-primary hover:text-accent transition-colors">
+              <Link href="/checkout" className="relative text-primary hover:text-accent transition-colors">
                 🛒
                 <span className="absolute -top-2 -right-2 bg-secondary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   0

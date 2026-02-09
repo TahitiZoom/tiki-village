@@ -139,6 +139,11 @@ export async function POST(request: Request) {
 
   if (!process.env.SEED_TOKEN || token !== process.env.SEED_TOKEN) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    // Debug: Check Blob token
+    console.log('BLOB_READ_WRITE_TOKEN exists:', !!process.env.BLOB_READ_WRITE_TOKEN)
+    console.log('BLOB_READ_WRITE_TOKEN length:', process.env.BLOB_READ_WRITE_TOKEN?.length)
+    console.log('BLOB_READ_WRITE_TOKEN prefix:', process.env.BLOB_READ_WRITE_TOKEN?.substring(0, 20))
   }
 
   try {

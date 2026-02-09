@@ -137,7 +137,7 @@ export default function Header({ currentLocale = 'fr' }: HeaderProps) {
               </div>
 
               {/* User Account */}
-              <Link href="/account" className="text-primary hover:text-accent transition-colors">
+              <Link href="/admin" className="text-primary hover:text-accent transition-colors" title="Connexion Admin">
                 👤
               </Link>
 

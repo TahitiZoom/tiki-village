@@ -11,6 +11,13 @@ const nextConfig = {
   },
   experimental: {
     reactCompiler: false,
+    serverActions: {
+      allowedOrigins: [
+        'localhost:3000',
+        '*.app.github.dev',
+        'ideal-doodle-pjrww4947w2jpr-3000.app.github.dev',
+      ],
+    },
   },
 }
 

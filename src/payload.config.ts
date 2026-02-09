@@ -4,6 +4,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import sharp from 'sharp'
 
 // Collections
 import { Users } from './collections/Users'
@@ -32,8 +33,10 @@ export default buildConfig({
     user: Users.slug,
     meta: {
       titleSuffix: '- Tiki Village Admin',
-      favicon: '/favicon.ico',
-      ogImage: '/og-image.jpg',
+      icons: [{ url: '/favicon.ico' }],
+      openGraph: {
+        images: [{ url: '/og-image.jpg' }],
+      },
     },
   },
   collections: [
@@ -62,15 +65,15 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || '',
     },
   }),
-  plugins: [
+  plugins: process.env.BLOB_READ_WRITE_TOKEN ? [
     vercelBlobStorage({
-      enabled: process.env.BLOB_READ_WRITE_TOKEN ? true : false,
-      token: process.env.BLOB_READ_WRITE_TOKEN || '',
+      enabled: true,
+      token: process.env.BLOB_READ_WRITE_TOKEN,
       collections: {
         media: true,
       },
     }),
-  ],
+  ] : [],
   localization: {
     locales: [
       {
@@ -89,4 +92,5 @@ export default buildConfig({
     defaultLocale: 'fr',
     fallback: true,
   },
+  sharp,
 })

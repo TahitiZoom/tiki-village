@@ -1,16 +1,19 @@
 import type { Metadata } from 'next'
+import '../globals.css'
 
 export const metadata: Metadata = {
   title: 'Tiki Village - Centre Culturel Polynésien',
   description: 'Découvrez la culture polynésienne authentique à Tiki Village',
 }
 
-export default function RootLayout({
+export default function FrontendLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  // This root layout just passes through children
-  // Each route group ((admin) and (frontend)) has its own html/body
-  return children
+  return (
+    <html lang="fr">
+      <body>{children}</body>
+    </html>
+  )
 }

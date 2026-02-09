@@ -8,7 +8,7 @@ export const Users: CollectionConfig = {
     maxLoginAttempts: 5,
     lockTime: 600 * 1000, // 10 minutes
     cookies: {
-      sameSite: 'lax',
+      sameSite: 'Lax',
       secure: process.env.NODE_ENV === 'production',
     },
   },

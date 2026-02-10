@@ -102,6 +102,19 @@ export const Users: CollectionConfig = {
       ],
     },
     {
+      name: 'language',
+      type: 'select',
+      options: [
+        { label: 'Français', value: 'fr' },
+        { label: 'English', value: 'en' },
+        { label: '日本語', value: 'ja' },
+      ],
+      defaultValue: 'fr',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'acceptedGDPR',
       type: 'checkbox',
       defaultValue: false,

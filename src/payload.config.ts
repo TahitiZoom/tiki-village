@@ -73,7 +73,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || '',
     },
   }),
-  plugins: process.env.BLOB_READ_WRITE_TOKEN ? [
+  plugins: process.env.BLOB_READ_WRITE_TOKEN && process.env.BLOB_READ_WRITE_TOKEN.startsWith('vercel_blob_rw_') ? [
     vercelBlobStorage({
       enabled: true,
       token: process.env.BLOB_READ_WRITE_TOKEN,

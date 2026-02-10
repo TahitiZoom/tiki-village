@@ -31,6 +31,9 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
   admin: {
     user: Users.slug,
+    livePreview: {
+      enabled: false,
+    },
     meta: {
       titleSuffix: '- Tiki Village Admin',
       icons: [{ url: '/favicon.ico' }],
@@ -43,6 +46,17 @@ export default buildConfig({
         Logo: {
           path: '@/app/(admin)/components/AdminLogo',
           exportName: 'AdminLogo',
+        },
+      },
+    },
+    i18n: {
+      defaultLanguage: 'fr',
+      languages: {
+        fr: {
+          label: 'Français',
+        },
+        en: {
+          label: 'English',
         },
       },
     },

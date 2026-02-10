@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Product diner-spectacle not found' }, { status: 404 })
     }
 
-    const productId = String(productMatch.docs[0].id)
+    const productId = productMatch.docs[0].id // Keep as number
     const totalPrice = 10500 * 2 + 4950 * 1
     const bookingNumber = `BKG-${Date.now()}-${Math.floor(Math.random() * 10000)}`
 
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
         items: [
           {
             product: productId,
-            booking: booking.id ? String(booking.id) : undefined,
+            booking: booking.id,
             quantity: 1,
             price: totalPrice,
             subtotal: totalPrice,

@@ -63,7 +63,7 @@ export async function POST(request: Request) {
         )
       }
 
-      const productId = String(productMatch.docs[0].id)
+      const productId = productMatch.docs[0].id // Keep as number
       const bookingNumber = `BKG-${Date.now()}-${Math.floor(Math.random() * 10000)}`
 
       const booking = await payload.create({
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
 
       orderItems.push({
         product: productId,
-        booking: booking.id ? String(booking.id) : undefined,
+        booking: booking.id,
         quantity: 1,
         price: item.totalPrice,
         subtotal: item.totalPrice,

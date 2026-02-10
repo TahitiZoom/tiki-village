@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  labels: {
+    singular: 'Média',
+    plural: 'Médias',
+  },
   admin: {
     useAsTitle: 'alt',
     defaultColumns: ['alt', 'filename', 'mimeType', 'filesize'],

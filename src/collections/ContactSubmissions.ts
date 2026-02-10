@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 export const ContactSubmissions: CollectionConfig = {
   slug: 'contact-submissions',
+  labels: {
+    singular: 'Demande de contact',
+    plural: 'Demandes de contact',
+  },
   admin: {
     useAsTitle: 'email',
     defaultColumns: ['name', 'email', 'subject', 'status', 'createdAt'],

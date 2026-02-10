@@ -1,0 +1,192 @@
+/**
+ * French translations for Payload CMS admin panel
+ */
+export const frenchTranslations = {
+  // General
+  save: 'Enregistrer',
+  saved: 'Enregistré',
+  cancel: 'Annuler',
+  delete: 'Supprimer',
+  edit: 'Modifier',
+  add: 'Ajouter',
+  remove: 'Supprimer',
+  view: 'Afficher',
+  logout: 'Déconnexion',
+  login: 'Connexion',
+  account: 'Compte',
+  settings: 'Paramètres',
+  language: 'Langue',
+
+  // Dashboard
+  dashboard: 'Tableau de bord',
+  welcome: 'Bienvenue',
+  recentActivity: 'Activité récente',
+
+  // Collections
+  products: 'Produits',
+  bookings: 'Réservations',
+  orders: 'Commandes',
+  users: 'Utilisateurs',
+  pages: 'Pages',
+  media: 'Médias',
+  testimonials: 'Témoignages',
+  categories: 'Catégories',
+  promotions: 'Promotions',
+  contactSubmissions: 'Demandes de contact',
+
+  // Common fields
+  title: 'Titre',
+  name: 'Nom',
+  email: 'E-mail',
+  phone: 'Téléphone',
+  description: 'Description',
+  status: 'Statut',
+  date: 'Date',
+  dateCreated: 'Date de création',
+  dateUpdated: 'Date de modification',
+  author: 'Auteur',
+  productPrice: 'Prix (XPF)',
+  quantity: 'Quantité',
+  total: 'Total',
+  subtotal: 'Sous-total',
+  discount: 'Remise',
+  published: 'Publié',
+  draft: 'Brouillon',
+  active: 'Actif',
+  inactive: 'Inactif',
+
+  // Product fields
+  productName: 'Nom du produit',
+  productDescription: 'Description du produit',
+  category: 'Catégorie',
+  stock: 'Stock',
+  sku: 'SKU',
+  image: 'Image',
+  images: 'Images',
+  bookable: 'Réservable',
+  bookingSettings: 'Paramètres de réservation',
+  availableDays: 'Jours disponibles',
+  maxParticipants: 'Participants maximum',
+  childrenAllowed: 'Enfants autorisés',
+  childrenPrice: 'Prix enfant (XPF)',
+
+  // Booking fields
+  bookingNumber: 'Numéro de réservation',
+  bookingDate: 'Date de réservation',
+  participants: 'Participants',
+  adults: 'Adultes',
+  children: 'Enfants',
+  totalPrice: 'Prix total',
+  bookingStatus: 'Statut de réservation',
+  pending: 'En attente',
+  confirmed: 'Confirmé',
+  cancelled: 'Annulé',
+
+  // Order fields
+  orderNumber: 'Numéro de commande',
+  orderDate: 'Date de commande',
+  items: 'Articles',
+  unitPrice: 'Prix unitaire',
+  paymentStatus: 'Statut du paiement',
+  paymentMethod: 'Méthode de paiement',
+  billingAddress: 'Adresse de facturation',
+  shippingAddress: 'Adresse de livraison',
+  unpaid: 'Non payé',
+  paid: 'Payé',
+  partiallyPaid: 'Partiellement payé',
+  refunded: 'Remboursé',
+
+  // User fields
+  firstName: 'Prénom',
+  lastName: 'Nom',
+  username: 'Nom d\'utilisateur',
+  role: 'Rôle',
+  admin: 'Administrateur',
+  password: 'Mot de passe',
+  passwordConfirm: 'Confirmer le mot de passe',
+  createdAt: 'Créé le',
+  updatedAt: 'Modifié le',
+
+  // Collection Actions
+  createProduct: 'Créer un produit',
+  editProduct: 'Modifier le produit',
+  deleteProduct: 'Supprimer le produit',
+  back: 'Retour',
+  next: 'Suivant',
+  previous: 'Précédent',
+  search: 'Rechercher',
+  filter: 'Filtrer',
+  sort: 'Trier',
+  export: 'Exporter',
+  import: 'Importer',
+  download: 'Télécharger',
+  upload: 'Télécharger (fichier)',
+
+  // Messages
+  loading: 'Chargement...',
+  success: 'Succès',
+  error: 'Erreur',
+  warning: 'Attention',
+  info: 'Information',
+  confirmDelete: 'Êtes-vous sûr de vouloir supprimer cet élément ?',
+  noResults: 'Aucun résultat',
+  required: 'Requis',
+  optional: 'Optionnel',
+
+  // Pagination
+  page: 'Page',
+  of: 'de',
+  perPage: 'par page',
+  showing: 'Affichage',
+  to: 'à',
+  results: 'résultats',
+
+  // Validation
+  validEmail: 'Veuillez entrer une adresse e-mail valide',
+  passwordTooShort: 'Le mot de passe doit contenir au moins 8 caractères',
+  passwordMatch: 'Les mots de passe ne correspondent pas',
+  fieldRequired: 'Ce champ est requis',
+  invalidFormat: 'Format invalide',
+
+  // Table headers
+  action: 'Action',
+  actions: 'Actions',
+
+  // Globals
+  globals: 'Paramètres globaux',
+  header: 'En-tête',
+  footer: 'Pied de page',
+  siteSettings: 'Paramètres du site',
+  navigation: 'Navigation',
+  contact: 'Contact',
+  socialLinks: 'Liens sociaux',
+
+  // Sidebar
+  home: 'Accueil',
+  content: 'Contenu',
+  management: 'Gestion',
+  configuration: 'Configuration',
+  documentation: 'Documentation',
+
+  // Dates
+  monday: 'Lundi',
+  tuesday: 'Mardi',
+  wednesday: 'Mercredi',
+  thursday: 'Jeudi',
+  friday: 'Vendredi',
+  saturday: 'Samedi',
+  sunday: 'Dimanche',
+  january: 'Janvier',
+  february: 'Février',
+  march: 'Mars',
+  april: 'Avril',
+  may: 'Mai',
+  june: 'Juin',
+  july: 'Juillet',
+  august: 'Août',
+  september: 'Septembre',
+  october: 'Octobre',
+  november: 'Novembre',
+  december: 'Décembre',
+}
+

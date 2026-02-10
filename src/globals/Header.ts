@@ -2,6 +2,7 @@ import type { GlobalConfig } from 'payload'
 
 export const Header: GlobalConfig = {
   slug: 'header',
+  label: 'En-tête',
   access: {
     read: () => true,
     update: ({ req: { user } }) => user?.role === 'admin',

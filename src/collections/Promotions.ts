@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Promotions: CollectionConfig = {
   slug: 'promotions',
+  labels: {
+    singular: 'Promotion',
+    plural: 'Promotions',
+  },
   admin: {
     useAsTitle: 'code',
     defaultColumns: ['code', 'type', 'value', 'active', 'validFrom', 'validTo'],

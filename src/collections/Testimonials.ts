@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Testimonials: CollectionConfig = {
   slug: 'testimonials',
+  labels: {
+    singular: 'Témoignage',
+    plural: 'Témoignages',
+  },
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'rating', 'status', 'createdAt'],

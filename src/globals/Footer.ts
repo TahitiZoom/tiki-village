@@ -2,6 +2,7 @@ import type { GlobalConfig } from 'payload'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
+  label: 'Pied de page',
   access: {
     read: () => true,
     update: ({ req: { user } }) => user?.role === 'admin',

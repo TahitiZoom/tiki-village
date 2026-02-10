@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
+  labels: {
+    singular: 'Commande',
+    plural: 'Commandes',
+  },
   admin: {
     useAsTitle: 'orderNumber',
     defaultColumns: ['orderNumber', 'user', 'total', 'status', 'createdAt'],

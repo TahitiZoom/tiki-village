@@ -72,6 +72,7 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || '',
     },
+    migrationDir: path.resolve(dirname, 'migrations'),
   }),
   plugins: process.env.BLOB_READ_WRITE_TOKEN && process.env.BLOB_READ_WRITE_TOKEN.startsWith('vercel_blob_rw_') ? [
     vercelBlobStorage({

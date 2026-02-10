@@ -46,17 +46,6 @@ export default buildConfig({
         },
       },
     },
-    i18n: {
-      defaultLanguage: 'fr',
-      languages: {
-        fr: {
-          label: 'Français',
-        },
-        en: {
-          label: 'English',
-        },
-      },
-    },
   },
   collections: [
     Users,

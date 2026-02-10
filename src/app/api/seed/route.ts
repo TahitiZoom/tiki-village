@@ -578,7 +578,8 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
+    const details = (error as { data?: unknown; errors?: unknown }).data ?? (error as { errors?: unknown }).errors
     console.error('Seed error:', error)
-    return NextResponse.json({ error: 'Seed failed', message }, { status: 500 })
+    return NextResponse.json({ error: 'Seed failed', message, details }, { status: 500 })
   }
 }

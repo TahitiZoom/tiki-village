@@ -37,8 +37,8 @@ export async function POST(request: Request) {
     const orderNumber = `TKV-${Date.now()}-${Math.floor(Math.random() * 10000)}`
 
     const orderItems = [] as Array<{
-      product: string
-      booking?: string
+      product: number | string
+      booking?: number | string
       quantity: number
       price: number
       subtotal: number

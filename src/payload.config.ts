@@ -38,6 +38,14 @@ export default buildConfig({
         images: [{ url: '/og-image.jpg' }],
       },
     },
+    components: {
+      graphics: {
+        Logo: {
+          path: '@/app/(admin)/components/AdminLogo',
+          exportName: 'AdminLogo',
+        },
+      },
+    },
   },
   collections: [
     Users,

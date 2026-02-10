@@ -1,2 +1,6 @@
 // Auto-generated importMap for Payload admin
-export const importMap = {}
+import { AdminLogo } from './components/AdminLogo'
+
+export const importMap = {
+	'@/app/(admin)/components/AdminLogo#AdminLogo': AdminLogo,
+}

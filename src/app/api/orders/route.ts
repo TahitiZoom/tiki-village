@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { Resend } from 'resend'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
         )
       }
 
-      const productId = productMatch.docs[0].id
+      const productId = String(productMatch.docs[0].id)
 
       const booking = await payload.create({
         collection: 'bookings',
@@ -88,7 +89,7 @@ export async function POST(request: Request) {
 
       orderItems.push({
         product: productId,
-        booking: booking.id,
+        booking: booking.id ? String(booking.id) : undefined,
         quantity: 1,
         price: item.totalPrice,
         subtotal: item.totalPrice,
@@ -113,6 +114,53 @@ export async function POST(request: Request) {
       },
       overrideAccess: true,
     })
+
+    if (process.env.RESEND_API_KEY) {
+      const resend = new Resend(process.env.RESEND_API_KEY)
+      const fromAddress = process.env.RESEND_FROM || 'contact@tahitizoom.pf'
+      const adminAddress = process.env.RESEND_ADMIN_EMAIL || 'contact@tahitizoom.pf'
+      const orderLines = items
+        .map((line) => `- ${line.productName} | ${line.date} ${line.time} | ${line.adults}A ${line.children}E | ${line.totalPrice} XPF`)
+        .join('\n')
+
+      const adminBody = [
+        'Nouvelle commande sur Tiki Village',
+        `Commande: ${order.orderNumber}`,
+        `Client: ${customer.firstName} ${customer.lastName}`,
+        `Email: ${customer.email}`,
+        `Telephone: ${customer.phone}`,
+        `Total: ${totalAmount} XPF`,
+        '',
+        'Articles:',
+        orderLines,
+      ].join('\n')
+
+      const customerBody = [
+        'Merci pour votre reservation.',
+        `Commande: ${order.orderNumber}`,
+        `Total: ${totalAmount} XPF`,
+        '',
+        'Nous vous contacterons pour confirmer le paiement.',
+      ].join('\n')
+
+      try {
+        await resend.emails.send({
+          from: fromAddress,
+          to: [adminAddress],
+          subject: 'Nouvelle commande Tiki Village',
+          text: adminBody,
+        })
+
+        await resend.emails.send({
+          from: fromAddress,
+          to: [customer.email],
+          subject: 'Confirmation de votre reservation',
+          text: customerBody,
+        })
+      } catch (emailError) {
+        console.error('Resend email error:', emailError)
+      }
+    }
 
     return NextResponse.json({
       ok: true,

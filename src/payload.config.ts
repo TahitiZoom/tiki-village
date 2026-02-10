@@ -46,6 +46,15 @@ export default buildConfig({
         },
       },
     },
+    preferences: {
+      language: {
+        options: [
+          { label: 'Français', value: 'fr' },
+          { label: 'English', value: 'en' },
+          { label: '日本語', value: 'ja' },
+        ],
+      },
+    },
   },
   collections: [
     Users,

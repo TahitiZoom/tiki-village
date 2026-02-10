@@ -27,8 +27,10 @@ const formatPrice = (amount: number) => {
 
 export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState<BookingItem[]>([])
-  const [fullName, setFullName] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -58,7 +60,7 @@ export default function CheckoutPage() {
   }
 
   const handleCheckout = async () => {
-    if (!fullName || !email || cartItems.length === 0) {
+    if (!firstName || !lastName || !email || !phone || cartItems.length === 0) {
       alert('Veuillez remplir tous les champs et avoir au moins une réservation.')
       return
     }
@@ -70,7 +72,7 @@ export default function CheckoutPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customer: { name: fullName, email },
+          customer: { firstName, lastName, email, phone },
           items: cartItems,
           totalAmount,
         }),
@@ -190,12 +192,24 @@ export default function CheckoutPage() {
 
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-semibold text-primary mb-2">Nom complet</label>
+                    <label className="block text-sm font-semibold text-primary mb-2">Prenom</label>
                     <input
                       type="text"
-                      placeholder="Jean Dupont"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Jean"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                      disabled={cartItems.length === 0}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-primary mb-2">Nom</label>
+                    <input
+                      type="text"
+                      placeholder="Dupont"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                       disabled={cartItems.length === 0}
                     />
@@ -208,6 +222,18 @@ export default function CheckoutPage() {
                       placeholder="jean@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                      disabled={cartItems.length === 0}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-primary mb-2">Telephone</label>
+                    <input
+                      type="tel"
+                      placeholder="+689 00 00 00 00"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                       disabled={cartItems.length === 0}
                     />

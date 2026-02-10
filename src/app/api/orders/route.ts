@@ -2,33 +2,121 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 
+type BookingItem = {
+  product: string
+  productName: string
+  date: string
+  time: string
+  adults: number
+  children: number
+  totalPrice: number
+}
+
+type CustomerInput = {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+}
+
 export async function POST(request: Request) {
   try {
-    const { customer, items, totalAmount } = await request.json()
+    const { customer, items, totalAmount } = (await request.json()) as {
+      customer: CustomerInput
+      items: BookingItem[]
+      totalAmount: number
+    }
 
-    if (!customer.name || !customer.email || !items.length) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      )
+    if (!customer?.firstName || !customer?.lastName || !customer?.email || !customer?.phone || !items?.length) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
     const payload = await getPayload({ config })
 
-    // For now, just return success with order number
-    // TODO: Create actual order in Payload when schema is finalized
     const orderNumber = `TKV-${Date.now()}-${Math.floor(Math.random() * 10000)}`
 
-    console.log('Order created:', {
-      orderNumber,
-      customer,
-      items,
-      totalAmount,
+    const orderItems = [] as Array<{
+      product: string
+      booking?: string
+      quantity: number
+      price: number
+      subtotal: number
+    }>
+
+    for (const item of items) {
+      const productMatch = await payload.find({
+        collection: 'products',
+        where: {
+          slug: {
+            equals: item.product,
+          },
+        },
+        limit: 1,
+        overrideAccess: true,
+      })
+
+      if (!productMatch.docs.length) {
+        return NextResponse.json(
+          { error: `Product not found for slug: ${item.product}` },
+          { status: 400 }
+        )
+      }
+
+      const productId = productMatch.docs[0].id
+
+      const booking = await payload.create({
+        collection: 'bookings',
+        data: {
+          product: productId,
+          date: item.date,
+          participants: {
+            adults: item.adults,
+            children: item.children,
+          },
+          totalPrice: item.totalPrice,
+          status: 'pending',
+          customerInfo: {
+            firstName: customer.firstName,
+            lastName: customer.lastName,
+            email: customer.email,
+            phone: customer.phone,
+          },
+          notes: `Heure: ${item.time}`,
+        },
+        overrideAccess: true,
+      })
+
+      orderItems.push({
+        product: productId,
+        booking: booking.id,
+        quantity: 1,
+        price: item.totalPrice,
+        subtotal: item.totalPrice,
+      })
+    }
+
+    const order = await payload.create({
+      collection: 'orders',
+      data: {
+        orderNumber,
+        items: orderItems,
+        subtotal: totalAmount,
+        total: totalAmount,
+        status: 'pending',
+        paymentStatus: 'unpaid',
+        billingAddress: {
+          firstName: customer.firstName,
+          lastName: customer.lastName,
+          email: customer.email,
+          phone: customer.phone,
+        },
+      },
+      overrideAccess: true,
     })
 
     return NextResponse.json({
       ok: true,
-      orderId: orderNumber,
+      orderId: order.orderNumber,
       message: 'Commande créée avec succès. Nous vous contacterons pour confirmer les détails de paiement.',
     })
   } catch (error) {

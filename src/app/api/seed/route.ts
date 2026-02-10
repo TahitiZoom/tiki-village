@@ -44,6 +44,8 @@ const makeRichText = (value: { fr: string; en: string; ja: string }) => {
   }
 }
 
+const pickLocale = <T>(value: { fr: T }) => value.fr
+
 const upsertByField = async <T extends { id: string }>(
   collection: string,
   field: string,
@@ -67,7 +69,7 @@ const upsertByField = async <T extends { id: string }>(
       collection,
       id: existing.docs[0].id,
       data,
-      locale: 'all',
+      locale: 'fr',
       overrideAccess: true,
     }) as Promise<T>
   }
@@ -75,7 +77,7 @@ const upsertByField = async <T extends { id: string }>(
   return payload.create({
     collection,
     data,
-    locale: 'all',
+    locale: 'fr',
     overrideAccess: true,
   }) as Promise<T>
 }
@@ -159,7 +161,11 @@ export async function POST(request: Request) {
   for (const category of categories) {
     const media = await ensureMedia(category.slug)
 
-    const categoryData: Record<string, unknown> = { ...category }
+    const categoryData: Record<string, unknown> = {
+      ...category,
+      name: pickLocale(category.name),
+      description: category.description ? pickLocale(category.description) : undefined,
+    }
     if (media) {
       categoryData.image = media.id
       results.media += 1
@@ -391,24 +397,40 @@ export async function POST(request: Request) {
     const media = await ensureMedia(product.slug)
 
     const productData: Record<string, unknown> = {
-      name: product.name,
+      name: pickLocale(product.name),
       slug: product.slug,
       category: category.id,
-      description: product.description,
-      shortDescription: product.shortDescription,
+      description: product.description ? pickLocale(product.description) : undefined,
+      shortDescription: product.shortDescription ? pickLocale(product.shortDescription) : undefined,
       price: product.price,
       status: product.status,
       bookable: product.bookable,
       bookingSettings: product.bookable ? product.bookingSettings : undefined,
-      extras: product.extras,
-      weddingOptions: product.weddingOptions,
+      extras: product.extras?.map((extra) => ({
+        ...extra,
+        name: pickLocale(extra.name),
+        description: extra.description ? pickLocale(extra.description) : undefined,
+      })),
+      weddingOptions: product.weddingOptions
+        ? {
+            ...product.weddingOptions,
+            includedServices: product.weddingOptions.includedServices
+              ? pickLocale(product.weddingOptions.includedServices)
+              : undefined,
+            additionalOptions: product.weddingOptions.additionalOptions?.map((option) => ({
+              ...option,
+              name: pickLocale(option.name),
+              description: option.description ? pickLocale(option.description) : undefined,
+            })),
+          }
+        : undefined,
     }
 
     if (media) {
       productData.images = [
         {
           image: media.id,
-          alt: product.name,
+          alt: pickLocale(product.name),
         },
       ]
       results.media += 1
@@ -474,7 +496,12 @@ export async function POST(request: Request) {
   ]
 
   for (const testimonial of testimonialSeeds) {
-    await upsertByField('testimonials', 'email', testimonial.email, testimonial)
+    const testimonialData: Record<string, unknown> = {
+      ...testimonial,
+      comment: pickLocale(testimonial.comment),
+      location: testimonial.location ? pickLocale(testimonial.location) : undefined,
+    }
+    await upsertByField('testimonials', 'email', testimonial.email, testimonialData)
     results.testimonials += 1
   }
 
@@ -546,7 +573,29 @@ export async function POST(request: Request) {
   ]
 
   for (const page of pages) {
-    await upsertByField('pages', 'slug', page.slug, page)
+    const pageData: Record<string, unknown> = {
+      ...page,
+      title: pickLocale(page.title),
+      hero: page.hero
+        ? {
+            ...page.hero,
+            heading: page.hero.heading ? pickLocale(page.hero.heading) : undefined,
+            subheading: page.hero.subheading ? pickLocale(page.hero.subheading) : undefined,
+          }
+        : undefined,
+      layout: Array.isArray(page.layout)
+        ? page.layout.map((block) => {
+            if (block.blockType === 'content') {
+              return {
+                ...block,
+                content: block.content ? pickLocale(block.content) : undefined,
+              }
+            }
+            return block
+          })
+        : page.layout,
+    }
+    await upsertByField('pages', 'slug', page.slug, pageData)
     results.pages += 1
   }
 
@@ -570,7 +619,11 @@ export async function POST(request: Request) {
   ]
 
   for (const promo of promotions) {
-    await upsertByField('promotions', 'code', promo.code, promo)
+    const promoData: Record<string, unknown> = {
+      ...promo,
+      description: promo.description ? pickLocale(promo.description) : undefined,
+    }
+    await upsertByField('promotions', 'code', promo.code, promoData)
     results.promotions += 1
   }
 

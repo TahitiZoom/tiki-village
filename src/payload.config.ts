@@ -31,9 +31,6 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
   admin: {
     user: Users.slug,
-    livePreview: {
-      enabled: false,
-    },
     meta: {
       titleSuffix: '- Tiki Village Admin',
       icons: [{ url: '/favicon.ico' }],

@@ -96,41 +96,12 @@ const upsertByField = async <T extends { id: string }>(
 
 const ensureMedia = async (slug: string, alt: { fr: string; en: string; ja: string }) => {
   try {
-    const filename = `${slug}.jpg`
-    const payload = await getPayload({ config })
-    const existing = await payload.find({
-      collection: 'media',
-      where: {
-        filename: {
-          equals: filename,
-        },
-      },
-      limit: 1,
-      overrideAccess: true,
-    })
-
-    if (existing.docs.length > 0) {
-      return existing.docs[0]
-    }
-
-    const buffer = await createPlaceholderImage()
-
-    return payload.create({
-      collection: 'media',
-      data: {
-        alt,
-      },
-      file: {
-        data: buffer,
-        mimetype: 'image/jpeg',
-        name: filename,
-        size: buffer.length,
-      },
-      overrideAccess: true,
-    })
+    // Skip media creation - can be added manually via admin
+    console.log(`Skipping media creation for: ${slug}`)
+    return null
   } catch (error) {
     console.error('Seed media error:', error)
-    throw error
+    return null
   }
 }
 
@@ -139,11 +110,6 @@ export async function POST(request: Request) {
 
   if (!process.env.SEED_TOKEN || token !== process.env.SEED_TOKEN) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-    // Debug: Check Blob token
-    console.log('BLOB_READ_WRITE_TOKEN exists:', !!process.env.BLOB_READ_WRITE_TOKEN)
-    console.log('BLOB_READ_WRITE_TOKEN length:', process.env.BLOB_READ_WRITE_TOKEN?.length)
-    console.log('BLOB_READ_WRITE_TOKEN prefix:', process.env.BLOB_READ_WRITE_TOKEN?.substring(0, 20))
   }
 
   try {
@@ -211,13 +177,15 @@ export async function POST(request: Request) {
       ja: category.name.ja,
     })
 
-    const doc = await upsertByField<{ id: string }>('categories', 'slug', category.slug, {
-      ...category,
-      image: media.id,
-    })
+    const categoryData: Record<string, unknown> = { ...category }
+    if (media) {
+      categoryData.image = media.id
+      results.media += 1
+    }
+
+    const doc = await upsertByField<{ id: string }>('categories', 'slug', category.slug, categoryData)
 
     results.categories += 1
-    results.media += 1
     categoryDocs.set(category.slug, doc)
   }
 
@@ -444,28 +412,33 @@ export async function POST(request: Request) {
       ja: product.name.ja,
     })
 
-    await upsertByField('products', 'slug', product.slug, {
+    const productData: Record<string, unknown> = {
       name: product.name,
       slug: product.slug,
       category: category.id,
       description: product.description,
       shortDescription: product.shortDescription,
-      images: [
-        {
-          image: media.id,
-          alt: product.name,
-        },
-      ],
       price: product.price,
       status: product.status,
       bookable: product.bookable,
       bookingSettings: product.bookable ? product.bookingSettings : undefined,
       extras: product.extras,
       weddingOptions: product.weddingOptions,
-    })
+    }
+
+    if (media) {
+      productData.images = [
+        {
+          image: media.id,
+          alt: product.name,
+        },
+      ]
+      results.media += 1
+    }
+
+    await upsertByField('products', 'slug', product.slug, productData)
 
     results.products += 1
-    results.media += 1
   }
 
   const testimonialSeeds = [

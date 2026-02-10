@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 
@@ -115,10 +115,24 @@ export async function POST(request: Request) {
       overrideAccess: true,
     })
 
-    if (process.env.RESEND_API_KEY) {
-      const resend = new Resend(process.env.RESEND_API_KEY)
-      const fromAddress = process.env.RESEND_FROM || 'contact@tahitizoom.pf'
-      const adminAddress = process.env.RESEND_ADMIN_EMAIL || 'contact@tahitizoom.pf'
+    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASSWORD) {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASSWORD,
+        },
+        tls: {
+          ciphers: 'SSLv3',
+          rejectUnauthorized: true,
+        },
+      })
+
+      const fromAddress = process.env.SMTP_FROM || 'accueil@tikivillage.pf'
+      const adminAddress = process.env.SMTP_ADMIN_EMAIL || 'accueil@tikivillage.pf'
+      
       const orderLines = items
         .map((line) => `- ${line.productName} | ${line.date} ${line.time} | ${line.adults}A ${line.children}E | ${line.totalPrice} XPF`)
         .join('\n')
@@ -144,21 +158,21 @@ export async function POST(request: Request) {
       ].join('\n')
 
       try {
-        await resend.emails.send({
+        await transporter.sendMail({
           from: fromAddress,
-          to: [adminAddress],
+          to: adminAddress,
           subject: 'Nouvelle commande Tiki Village',
           text: adminBody,
         })
 
-        await resend.emails.send({
+        await transporter.sendMail({
           from: fromAddress,
-          to: [customer.email],
+          to: customer.email,
           subject: 'Confirmation de votre reservation',
           text: customerBody,
         })
       } catch (emailError) {
-        console.error('Resend email error:', emailError)
+        console.error('SMTP email error:', emailError)
       }
     }
 

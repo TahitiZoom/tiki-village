@@ -29,10 +29,12 @@ export async function POST(request: Request) {
 
     const productId = String(productMatch.docs[0].id)
     const totalPrice = 10500 * 2 + 4950 * 1
+    const bookingNumber = `BKG-${Date.now()}-${Math.floor(Math.random() * 10000)}`
 
     const booking = await payload.create({
       collection: 'bookings',
       data: {
+        bookingNumber,
         product: productId,
         date: '2026-06-16T00:00:00.000Z',
         participants: {

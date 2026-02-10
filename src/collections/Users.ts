@@ -117,30 +117,6 @@ export const Users: CollectionConfig = {
         position: 'sidebar',
       },
     },
-    {
-      name: 'preferredLanguage',
-      type: 'select',
-      defaultValue: 'fr',
-      required: false,
-      options: [
-        {
-          label: 'Français',
-          value: 'fr',
-        },
-        {
-          label: 'English',
-          value: 'en',
-        },
-        {
-          label: '日本語',
-          value: 'ja',
-        },
-      ],
-      admin: {
-        position: 'sidebar',
-        description: 'Langue préférée de l\'interface administrative',
-      },
-    },
   ],
   timestamps: true,
 }

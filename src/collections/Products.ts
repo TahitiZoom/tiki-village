@@ -51,8 +51,8 @@ export const Products: CollectionConfig = {
     {
       name: 'images',
       type: 'array',
-      required: true,
-      minRows: 1,
+      required: false,
+      minRows: 0,
       fields: [
         {
           name: 'image',

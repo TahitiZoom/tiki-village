@@ -99,6 +99,8 @@ export async function POST(request: Request) {
       })
     }
 
+    console.log('Creating order with items:', JSON.stringify(orderItems, null, 2))
+    
     const order = await payload.create({
       collection: 'orders',
       data: {
@@ -117,6 +119,9 @@ export async function POST(request: Request) {
       },
       locale: 'fr',
       overrideAccess: true,
+    }).catch((err) => {
+      console.error('Order creation error details:', err)
+      throw err
     })
 
     if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASSWORD) {

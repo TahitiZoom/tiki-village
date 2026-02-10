@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
-import sharp from 'sharp'
 import config from '@/payload.config'
 
 export const dynamic = 'force-dynamic'
@@ -45,21 +44,6 @@ const makeRichText = (value: { fr: string; en: string; ja: string }) => {
   }
 }
 
-const createPlaceholderImage = async () => {
-  const width = 1200
-  const height = 800
-  return sharp({
-    create: {
-      width,
-      height,
-      channels: 3,
-      background: '#f5e9d6',
-    },
-  })
-    .jpeg({ quality: 85 })
-    .toBuffer()
-}
-
 const upsertByField = async <T extends { id: string }>(
   collection: string,
   field: string,
@@ -94,7 +78,7 @@ const upsertByField = async <T extends { id: string }>(
   }) as Promise<T>
 }
 
-const ensureMedia = async (slug: string, alt: { fr: string; en: string; ja: string }) => {
+const ensureMedia = async (slug: string) => {
   try {
     // Skip media creation - can be added manually via admin
     console.log(`Skipping media creation for: ${slug}`)
@@ -171,11 +155,7 @@ export async function POST(request: Request) {
   const categoryDocs = new Map<string, { id: string }>()
 
   for (const category of categories) {
-    const media = await ensureMedia(category.slug, {
-      fr: category.name.fr,
-      en: category.name.en,
-      ja: category.name.ja,
-    })
+    const media = await ensureMedia(category.slug)
 
     const categoryData: Record<string, unknown> = { ...category }
     if (media) {
@@ -406,11 +386,7 @@ export async function POST(request: Request) {
     const category = categoryDocs.get(product.category)
     if (!category) continue
 
-    const media = await ensureMedia(product.slug, {
-      fr: product.name.fr,
-      en: product.name.en,
-      ja: product.name.ja,
-    })
+    const media = await ensureMedia(product.slug)
 
     const productData: Record<string, unknown> = {
       name: product.name,

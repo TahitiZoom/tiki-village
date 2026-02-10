@@ -78,7 +78,7 @@ const upsertByField = async <T extends { id: string }>(
   }) as Promise<T>
 }
 
-const ensureMedia = async (slug: string) => {
+const ensureMedia = async (slug: string): Promise<{ id: string } | null> => {
   try {
     // Skip media creation - can be added manually via admin
     console.log(`Skipping media creation for: ${slug}`)

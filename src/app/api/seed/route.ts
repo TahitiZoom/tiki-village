@@ -67,6 +67,7 @@ const upsertByField = async <T extends { id: string }>(
       collection,
       id: existing.docs[0].id,
       data,
+      locale: 'all',
       overrideAccess: true,
     }) as Promise<T>
   }
@@ -74,6 +75,7 @@ const upsertByField = async <T extends { id: string }>(
   return payload.create({
     collection,
     data,
+    locale: 'all',
     overrideAccess: true,
   }) as Promise<T>
 }

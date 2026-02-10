@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import BookingCalendar from '@/components/booking/BookingCalendar'
 import ParticipantSelector from '@/components/booking/ParticipantSelector'
 
@@ -54,6 +55,7 @@ const formatPrice = (amount: number) => {
 }
 
 export default function BookingForm() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const initialService = searchParams.get('service')
 
@@ -62,6 +64,7 @@ export default function BookingForm() {
   const [selectedTime, setSelectedTime] = useState('')
   const [adults, setAdults] = useState(1)
   const [children, setChildren] = useState(0)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const selectedProduct = useMemo(
     () => products.find((product) => product.slug === selectedSlug),
@@ -74,6 +77,38 @@ export default function BookingForm() {
     const childTotal = children * (selectedProduct.childrenPrice || 0)
     return adultTotal + childTotal
   }, [adults, children, selectedProduct])
+
+  const handleAddToCart = async () => {
+    if (!selectedProduct || !selectedDate || !selectedTime) return
+
+    setIsProcessing(true)
+    try {
+      const booking = {
+        product: selectedProduct.slug,
+        productName: selectedProduct.name,
+        date: selectedDate.toISOString(),
+        time: selectedTime,
+        adults,
+        children,
+        totalPrice,
+        timestamp: new Date().toISOString(),
+      }
+
+      // Save to localStorage
+      const existingCart = localStorage.getItem('cart')
+      const cart = existingCart ? JSON.parse(existingCart) : []
+      cart.push(booking)
+      localStorage.setItem('cart', JSON.stringify(cart))
+
+      // Redirect to checkout
+      router.push('/checkout')
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout au panier:', error)
+      alert('Erreur lors de l\'ajout au panier. Veuillez réessayer.')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
 
   const formattedDate = selectedDate
     ? selectedDate.toLocaleDateString('fr-FR', {
@@ -175,10 +210,11 @@ export default function BookingForm() {
           </div>
 
           <button
-            className="w-full bg-accent text-white py-3 rounded-lg font-semibold hover:bg-accent/90 transition-colors mb-3"
-            disabled={!selectedProduct || !selectedDate || !selectedTime}
+            onClick={handleAddToCart}
+            disabled={!selectedProduct || !selectedDate || !selectedTime || isProcessing}
+            className="w-full bg-accent text-white py-3 rounded-lg font-semibold hover:bg-accent/90 transition-colors mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Ajouter au panier
+            {isProcessing ? 'Ajout en cours...' : 'Ajouter au panier'}
           </button>
 
           <p className="text-xs text-gray-600">

@@ -86,6 +86,7 @@ export async function POST(request: Request) {
           },
           notes: `Heure: ${item.time}`,
         },
+        locale: 'fr',
         overrideAccess: true,
       })
 
@@ -114,6 +115,7 @@ export async function POST(request: Request) {
           phone: customer.phone,
         },
       },
+      locale: 'fr',
       overrideAccess: true,
     })
 

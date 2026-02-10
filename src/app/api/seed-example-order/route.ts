@@ -51,6 +51,7 @@ export async function POST(request: Request) {
         },
         notes: 'Heure: 19:00',
       },
+      locale: 'fr',
       overrideAccess: true,
     })
 
@@ -80,6 +81,7 @@ export async function POST(request: Request) {
           phone: '+689 00 00 00 00',
         },
       },
+      locale: 'fr',
       overrideAccess: true,
     })
 

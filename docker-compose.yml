@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tiki-village-db
+    environment:
+      POSTGRES_USER: tikivillage
+      POSTGRES_PASSWORD: tikivillage
+      POSTGRES_DB: tiki_village
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tikivillage -d tiki_village"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

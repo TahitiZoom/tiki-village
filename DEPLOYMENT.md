@@ -6,33 +6,47 @@ This guide will help you deploy the Tiki Village e-commerce platform to Vercel.
 
 - GitHub account
 - Vercel account (free tier is sufficient for development)
-- MongoDB Atlas account (or other MongoDB hosting)
+- PostgreSQL database (Vercel Postgres, Neon, Supabase, or local)
 - PayZen/OSB account for payment processing
 
 ## Step 1: Database Setup
 
-### MongoDB Atlas
+### PostgreSQL (Neon / Supabase / Vercel Postgres)
 
-1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Create a new cluster (free M0 tier is fine for development)
-3. Configure network access:
-   - Click "Network Access" in the left sidebar
-   - Add IP Address: `0.0.0.0/0` (allow from anywhere - Vercel has dynamic IPs)
-4. Create a database user:
-   - Click "Database Access" in the left sidebar
-   - Add New Database User
-   - Choose "Password" authentication
-   - Save the username and password
-5. Get connection string:
-   - Click "Database" in the left sidebar
-   - Click "Connect" on your cluster
-   - Choose "Connect your application"
-   - Copy the connection string
-   - Replace `<password>` with your actual password
+**Option A: Neon (recommended, free tier available)**
+
+1. Go to [Neon](https://neon.tech) and create a free account
+2. Create a new project and database
+3. In the connection settings, copy the connection string (pooled)
+4. Use this as your `DATABASE_URL`
 
 Example connection string:
 ```
-mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tiki-village?retryWrites=true&w=majority
+postgresql://username:password@ep-xxx.us-east-1.aws.neon.tech/tiki_village?sslmode=require
+```
+
+**Option B: Supabase**
+
+1. Go to [Supabase](https://supabase.com) and create a project
+2. Go to Project Settings → Database
+3. Copy the "Connection string" (URI format)
+4. Use this as your `DATABASE_URL`
+
+**Option C: Vercel Postgres**
+
+1. In your Vercel dashboard, go to Storage
+2. Create a new Postgres store
+3. Connect it to your project — Vercel will inject `POSTGRES_URL` automatically
+4. The application also reads `POSTGRES_URL` as a fallback for `DATABASE_URL`
+
+**Option D: Local PostgreSQL (development)**
+
+```bash
+# Using Docker (easiest)
+docker compose up -d
+
+# Or install PostgreSQL and create a database
+createdb tiki_village
 ```
 
 ## Step 2: Vercel Blob Storage
@@ -77,9 +91,8 @@ vercel link
 
 4. Set environment variables:
 ```bash
-vercel env add MONGODB_URI
-vercel env add DATABASE_URI
-vercel env add PAYLOAD_KEY
+vercel env add DATABASE_URL
+vercel env add PAYLOAD_SECRET
 vercel env add NEXT_PUBLIC_SERVER_URL
 vercel env add PAYZEN_SHOP_ID
 vercel env add PAYZEN_MODE
@@ -110,9 +123,8 @@ vercel --prod
 
 **Production Variables:**
 ```
-MONGODB_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tiki-village
-DATABASE_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tiki-village
-PAYLOAD_KEY=your-very-secure-random-string-here
+DATABASE_URL=postgresql://username:password@host:5432/tiki_village?sslmode=require
+PAYLOAD_SECRET=your-very-secure-random-string-minimum-32-characters
 NEXT_PUBLIC_SERVER_URL=https://your-domain.vercel.app
 PAYZEN_SHOP_ID=your-shop-id
 PAYZEN_MODE=PRODUCTION
@@ -200,10 +212,10 @@ Enable Vercel Analytics in your project settings for:
 
 ### Database Backups
 
-Configure automated backups in MongoDB Atlas:
-1. Go to your cluster
-2. Click "Backup" tab
-3. Enable Cloud Backup
+Configure automated backups in your PostgreSQL provider:
+- **Neon**: Backups are automatic; use the Neon console to manage branches and restore points
+- **Supabase**: Enable Point-in-Time Recovery in Project Settings → Database
+- **Vercel Postgres**: Managed backups are available in the Vercel Storage dashboard
 
 ### Regular Updates
 
@@ -224,9 +236,10 @@ npm audit fix
 - Solution: Run `npm install` and redeploy
 
 **Error: Database connection failed**
-- Check MongoDB Atlas IP whitelist
-- Verify connection string format
-- Ensure network access is configured
+- Verify `DATABASE_URL` (or `POSTGRES_URL`) is set correctly in your environment
+- Check that your PostgreSQL provider allows connections from Vercel IPs
+- For Neon/Supabase, ensure SSL mode is enabled (`?sslmode=require`)
+- Test the connection string locally first
 
 ### Runtime Errors
 
@@ -241,9 +254,9 @@ npm audit fix
 
 ## Security Checklist
 
-- [ ] Use strong `PAYLOAD_KEY` (32+ characters)
+- [ ] Use strong `PAYLOAD_SECRET` (32+ characters)
 - [ ] Enable 2FA on Vercel account
-- [ ] Restrict MongoDB network access if possible
+- [ ] Restrict PostgreSQL access to Vercel IP ranges if possible
 - [ ] Use production PayZen credentials only in production
 - [ ] Enable HTTPS redirect in Vercel
 - [ ] Configure CSP headers
@@ -261,6 +274,7 @@ npm audit fix
 For deployment issues:
 - Vercel: https://vercel.com/support
 - Payload CMS: https://payloadcms.com/docs
-- MongoDB: https://www.mongodb.com/support
+- Neon: https://neon.tech/docs
+- Supabase: https://supabase.com/docs
 
 For application-specific issues, contact the development team.

@@ -1,8 +1,8 @@
 # Tiki Village - E-commerce Platform
 
-Migration from WordPress/WooCommerce to Payload CMS e-commerce platform hosted on Vercel.
+Plateforme e-commerce Payload CMS auto-hébergée sur Coolify.
 
-## 🌺 About
+## About
 
 Tiki Village is a Polynesian Cultural Center in French Polynesia offering cultural workshops, dinner shows, and traditional Polynesian wedding ceremonies. This project is a complete e-commerce solution built with:
 
@@ -11,47 +11,49 @@ Tiki Village is a Polynesian Cultural Center in French Polynesia offering cultur
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
 - **PayZen/OSB** - Payment gateway for French Polynesia
-- **Vercel** - Serverless hosting platform
+- **PostgreSQL** - Base de données relationnelle
+- **Docker** - Containerisation
+- **Coolify** - Plateforme d'auto-hébergement
 
-## 🚀 Features
+## Features
 
 ### E-commerce
-- ✅ Product catalog with 8 services (workshops, shows, weddings)
-- ✅ Booking system with calendar availability
-- ✅ Participant selection (adults/children)
-- ✅ Extra options (transfers, packages)
-- ✅ Shopping cart and checkout
-- ✅ Order management
-- ✅ Promotional codes and discounts
+- Product catalog with 8 services (workshops, shows, weddings)
+- Booking system with calendar availability
+- Participant selection (adults/children)
+- Extra options (transfers, packages)
+- Shopping cart and checkout
+- Order management
+- Promotional codes and discounts
 
 ### Payment Integration
-- ✅ PayZen/OSB payment gateway integration
-- ✅ Credit card payments (Visa/Mastercard)
-- ✅ 3DS support
-- ✅ XPF currency (Franc Pacifique)
-- ✅ Payment webhooks (standard and REST API)
+- PayZen/OSB payment gateway integration
+- Credit card payments (Visa/Mastercard)
+- 3DS support
+- XPF currency (Franc Pacifique)
+- Payment webhooks (standard and REST API)
 
 ### Multi-language
-- ✅ French (default)
-- ✅ English
-- ✅ Japanese (日本語)
+- French (default)
+- English
+- Japanese (日本語)
 
 ### Content Management
-- ✅ Dynamic pages with blocks
-- ✅ Rich text editor (Lexical)
-- ✅ Media library with image optimization
-- ✅ Testimonials management
-- ✅ Contact form submissions
+- Dynamic pages with blocks
+- Rich text editor (Lexical)
+- Media library with image optimization
+- Testimonials management
+- Contact form submissions
 
 ### Features
-- ✅ User authentication (login/register)
-- ✅ GDPR compliance
-- ✅ Cookie consent
-- ✅ SEO optimization
-- ✅ Responsive design
-- ✅ Admin panel
+- User authentication (login/register)
+- GDPR compliance
+- Cookie consent
+- SEO optimization
+- Responsive design
+- Admin panel
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 tiki-village/
@@ -65,35 +67,24 @@ tiki-village/
 │   │   ├── layout.tsx
 │   │   └── globals.css
 │   ├── collections/           # Payload Collections
-│   │   ├── Users.ts
-│   │   ├── Products.ts
-│   │   ├── Categories.ts
-│   │   ├── Bookings.ts
-│   │   ├── Orders.ts
-│   │   ├── Pages.ts
-│   │   ├── Media.ts
-│   │   ├── Testimonials.ts
-│   │   ├── Promotions.ts
-│   │   └── ContactSubmissions.ts
 │   ├── globals/              # Payload Globals
-│   │   ├── Header.ts
-│   │   ├── Footer.ts
-│   │   └── SiteSettings.ts
+│   ├── components/           # React Components
 │   ├── lib/                  # Utility functions
-│   │   └── payzen.ts        # PayZen integration
 │   └── payload.config.ts    # Payload configuration
 ├── package.json
 ├── tsconfig.json
 ├── tailwind.config.ts
 ├── next.config.js
-└── vercel.json
+├── Dockerfile
+├── docker-compose.yml
+└── .dockerignore
 ```
 
-## 🛠️ Installation
+## Installation
 
 ### Prerequisites
-- Node.js 18+ 
-- PostgreSQL database (local, Vercel Postgres, Neon, or Supabase)
+- Node.js 18+ (pour le développement local)
+- PostgreSQL 16+ (ou via Docker)
 - PayZen/OSB account (for payment processing)
 
 ### Setup
@@ -136,7 +127,7 @@ The application will be available at:
 
 Visit `http://localhost:3000/admin` and create your admin account.
 
-## 📦 Collections
+## Collections
 
 ### Products
 Complete product catalog with:
@@ -171,7 +162,7 @@ Customer accounts with:
 - Order history
 - GDPR consent
 
-## 💳 PayZen Integration
+## PayZen Integration
 
 This project integrates with PayZen/OSB (Lyra Network) for payment processing in French Polynesia.
 
@@ -201,7 +192,7 @@ Configure these webhook URLs in your PayZen dashboard:
 
 All prices are in **XPF (Franc Pacifique)**. The system uses 0 decimal places as per XPF standard.
 
-## 🌍 Internationalization
+## Internationalization
 
 The site supports three languages:
 - **French (fr)** - Default
@@ -210,7 +201,7 @@ The site supports three languages:
 
 Content is localized through Payload's built-in i18n system. Translatable fields are marked with `localized: true`.
 
-## 🎨 Design System
+## Design System
 
 ### Colors
 ```css
@@ -231,42 +222,29 @@ Custom Tailwind classes:
 - `card` - Card component
 - `polynesian-pattern` - Decorative pattern
 
-## 🚀 Deployment
+## Deployment
 
-### Vercel Deployment
+### Déploiement sur Coolify
 
-1. **Connect to Vercel**
+1. **Connectez votre repo GitHub** dans Coolify
+2. **Configurez les variables d'environnement** (voir `.env.example`)
+3. **Déployez** — Coolify construit automatiquement via le `Dockerfile`
+
+Pour les instructions détaillées, voir [DEPLOYMENT.md](DEPLOYMENT.md).
+
+### Développement local avec Docker
+
 ```bash
-npm i -g vercel
-vercel
+# Copier et configurer les variables d'environnement
+cp .env.example .env
+
+# Lancer avec Docker Compose
+docker compose up -d
 ```
 
-2. **Set environment variables**
+L'application sera disponible sur `http://localhost:3000`
 
-Add all environment variables from `.env` to your Vercel project settings.
-
-3. **Configure database**
-
-Use Vercel Postgres, Neon, Supabase, or another hosted PostgreSQL service. Update `DATABASE_URL` in Vercel.
-
-4. **Configure Vercel Blob Storage**
-
-Enable Vercel Blob Storage for media files and add `BLOB_READ_WRITE_TOKEN` to environment variables.
-
-5. **Deploy**
-```bash
-vercel --prod
-```
-
-### Database Setup
-
-For production, use Vercel Postgres, Neon, or Supabase:
-1. Create a PostgreSQL database at your chosen provider
-2. Configure network access (allow Vercel IPs if needed)
-3. Create database user with appropriate permissions
-4. Get connection string and add to `DATABASE_URL`
-
-## 📚 API Documentation
+## API Documentation
 
 ### REST API
 
@@ -278,34 +256,32 @@ Payload automatically generates REST API endpoints:
 - `GET /api/orders/:id` - Get order
 - etc.
 
-Full API documentation: `http://localhost:3000/api/docs`
-
 ### GraphQL API
 
 GraphQL endpoint available at: `http://localhost:3000/api/graphql`
 
-## 🔒 Security
+## Security
 
-- ✅ CSRF protection
-- ✅ Rate limiting
-- ✅ Input validation
-- ✅ SQL injection protection
-- ✅ XSS prevention
-- ✅ HTTPS required in production
-- ✅ Secure payment processing
-- ✅ GDPR compliant
+- CSRF protection
+- Rate limiting
+- Input validation
+- SQL injection protection
+- XSS prevention
+- HTTPS required in production
+- Secure payment processing
+- GDPR compliant
 
-## 📄 License
+## License
 
 Copyright © 2024 Tiki Village. All rights reserved.
 
-## 🤝 Support
+## Support
 
 For support, contact:
 - Email: contact@tikivillage.pf
 - Phone: +689 XX XX XX XX
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [ ] Mobile app (React Native)
 - [ ] Advanced reporting dashboard

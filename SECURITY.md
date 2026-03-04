@@ -40,13 +40,12 @@ Critical environment variables must be kept secure:
 **Never commit these to version control:**
 - `PAYLOAD_KEY` - Used for session encryption
 - `PAYZEN_*_KEY` - Payment gateway credentials
-- `MONGODB_URI` - Database connection string
-- `BLOB_READ_WRITE_TOKEN` - Media storage token
+- `DATABASE_URL` - Database connection string
 
 ### HTTPS/SSL
 
 - Always use HTTPS in production
-- Vercel provides free SSL certificates
+- Coolify + Let's Encrypt fournit des certificats SSL gratuits
 - PayZen requires HTTPS for webhooks
 
 ### Authentication
@@ -70,7 +69,7 @@ All user inputs are validated:
 - Email format validation
 - Phone number format validation
 - XSS prevention via React
-- SQL injection prevention via Payload/MongoDB
+- SQL injection prevention via Payload/PostgreSQL
 
 ### Rate Limiting
 
@@ -151,7 +150,7 @@ We will respond within 48 hours and work to:
 
 ### For Deployment
 
-1. **Environment Variables**: Set in Vercel dashboard
+1. **Environment Variables**: Configurées dans l'interface Coolify
 2. **Database Security**: IP whitelist, strong passwords
 3. **Webhook Secrets**: Rotate regularly
 4. **SSL Certificates**: Auto-renewal enabled

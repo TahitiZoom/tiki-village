@@ -13,7 +13,7 @@ build/
 dist/
 
 # Production
-.vercel
+# .vercel
 
 # Misc
 .DS_Store

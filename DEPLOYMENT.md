@@ -1,266 +1,194 @@
 # Deployment Guide - Tiki Village
 
-This guide will help you deploy the Tiki Village e-commerce platform to Vercel.
+Ce guide explique comment déployer la plateforme Tiki Village sur **Coolify** (auto-hébergé).
 
-## Prerequisites
+## Prérequis
 
-- GitHub account
-- Vercel account (free tier is sufficient for development)
-- MongoDB Atlas account (or other MongoDB hosting)
-- PayZen/OSB account for payment processing
+- Un serveur avec **Coolify** installé (LXC, VPS, ou dédié)
+- Un compte GitHub (pour le déploiement automatique depuis le repo)
+- Un compte PayZen/OSB pour le traitement des paiements
 
-## Step 1: Database Setup
+## Architecture
 
-### MongoDB Atlas
-
-1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Create a new cluster (free M0 tier is fine for development)
-3. Configure network access:
-   - Click "Network Access" in the left sidebar
-   - Add IP Address: `0.0.0.0/0` (allow from anywhere - Vercel has dynamic IPs)
-4. Create a database user:
-   - Click "Database Access" in the left sidebar
-   - Add New Database User
-   - Choose "Password" authentication
-   - Save the username and password
-5. Get connection string:
-   - Click "Database" in the left sidebar
-   - Click "Connect" on your cluster
-   - Choose "Connect your application"
-   - Copy the connection string
-   - Replace `<password>` with your actual password
-
-Example connection string:
 ```
-mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tiki-village?retryWrites=true&w=majority
+┌─────────────────────────────────┐
+│           Coolify               │
+│  ┌───────────┐  ┌───────────┐  │
+│  │  Next.js  │  │ PostgreSQL│  │
+│  │  (App)    │──│   (DB)    │  │
+│  │  :3000    │  │   :5432   │  │
+│  └───────────┘  └───────────┘  │
+│        │                        │
+│  ┌───────────┐                  │
+│  │  Volume   │                  │
+│  │  (media)  │                  │
+│  └───────────┘                  │
+└─────────────────────────────────┘
 ```
 
-## Step 2: Vercel Blob Storage
+## Étape 1 : Configuration dans Coolify
 
-1. Go to your Vercel dashboard
-2. Select your project (or create one)
-3. Go to "Storage" tab
-4. Create a new Blob store
-5. Copy the `BLOB_READ_WRITE_TOKEN` from the environment variables
+### Option A : Déploiement via Docker Compose
 
-## Step 3: PayZen Configuration
+1. Dans Coolify, créez un nouveau projet
+2. Ajoutez une nouvelle ressource → **Docker Compose**
+3. Connectez votre repository GitHub `TahitiZoom/tiki-village`
+4. Coolify détectera automatiquement le `docker-compose.yml`
 
-Contact OSB (Lyra Network Polynésie) to get your credentials:
+### Option B : Déploiement via Dockerfile
 
-Required credentials:
-- `PAYZEN_SHOP_ID` - Your shop identifier
-- `PAYZEN_TEST_KEY` - Test API key
-- `PAYZEN_PROD_KEY` - Production API key
-- `PAYZEN_HMAC_TEST_KEY` - Test HMAC key
-- `PAYZEN_HMAC_PROD_KEY` - Production HMAC key
-- `PAYZEN_PUBLIC_TEST_KEY` - Test public key
-- `PAYZEN_PUBLIC_PROD_KEY` - Production public key
+1. Dans Coolify, créez un nouveau projet
+2. Ajoutez une nouvelle ressource → **Dockerfile**
+3. Connectez votre repository GitHub
+4. Ajoutez séparément un service **PostgreSQL** dans le même projet
 
-## Step 4: Deploy to Vercel
+## Étape 2 : Variables d'environnement
 
-### Option A: Using Vercel CLI
+Configurez ces variables dans l'interface Coolify :
 
-1. Install Vercel CLI:
+### Base de données
+```
+DATABASE_URL=postgresql://tikivillage:<mot_de_passe>@db:5432/tikivillage
+POSTGRES_PASSWORD=<mot_de_passe_sécurisé>
+```
+
+### Payload CMS
+```
+PAYLOAD_SECRET=<clé_aléatoire_32_caractères_minimum>
+NEXT_PUBLIC_SERVER_URL=https://votre-domaine.pf
+```
+
+### PayZen
+```
+PAYZEN_SHOP_ID=votre_shop_id
+PAYZEN_MODE=TEST
+PAYZEN_TEST_KEY=votre_test_key
+PAYZEN_PROD_KEY=votre_prod_key
+PAYZEN_HMAC_TEST_KEY=votre_hmac_test_key
+PAYZEN_HMAC_PROD_KEY=votre_hmac_prod_key
+PAYZEN_PUBLIC_TEST_KEY=votre_public_test_key
+PAYZEN_PUBLIC_PROD_KEY=votre_public_prod_key
+```
+
+### Email
+```
+SMTP_HOST=smtp-mail.outlook.com
+SMTP_PORT=587
+SMTP_USER=vaimoe@tikivillage.pf
+SMTP_PASSWORD=your-smtp-password-here
+SMTP_FROM=accueil@tikivillage.pf
+SMTP_ADMIN_EMAIL=accueil@tikivillage.pf
+```
+
+## Étape 3 : Configuration du domaine
+
+1. Dans Coolify, allez dans les paramètres du service
+2. Ajoutez votre domaine personnalisé (ex : `www.tikivillage.pf`)
+3. Coolify gère automatiquement les certificats SSL via Let's Encrypt
+4. Mettez à jour `NEXT_PUBLIC_SERVER_URL` avec votre domaine
+
+## Étape 4 : Post-déploiement
+
+### 1. Créer le compte administrateur
+
+Visitez votre site :
+```
+https://votre-domaine.pf/admin
+```
+
+Créez votre compte admin :
+- Email : admin@tikivillage.pf
+- Mot de passe : [Choisir un mot de passe fort]
+- Rôle : Admin
+
+### 2. Configurer les Webhooks PayZen
+
+Dans votre tableau de bord PayZen, configurez :
+
+**Webhook standard :**
+```
+https://votre-domaine.pf/api/payzen/notify
+```
+
+**Webhook REST API :**
+```
+https://votre-domaine.pf/api/payzen/notify-rest
+```
+
+### 3. Données initiales
+
+Utilisez les endpoints de seed (protégés par `SEED_TOKEN`) :
+```
+https://votre-domaine.pf/api/seed-all
+```
+
+Ou manuellement :
+1. Connectez-vous au panneau d'administration
+2. Créez les catégories (Ateliers, Soirées, Mariages)
+3. Créez les produits (voir `SEED_DATA.md`)
+4. Configurez les Globals (Header, Footer, SiteSettings)
+
+## Sauvegardes
+
+### Base de données PostgreSQL
+
+Coolify propose des sauvegardes automatiques pour PostgreSQL. Vous pouvez aussi les faire manuellement :
+
 ```bash
-npm i -g vercel
+# Sauvegarde
+docker exec <container_postgres> pg_dump -U tikivillage tikivillage > backup_$(date +%Y%m%d).sql
+
+# Restauration
+docker exec -i <container_postgres> psql -U tikivillage tikivillage < backup.sql
 ```
 
-2. Login to Vercel:
-```bash
-vercel login
-```
+### Fichiers média
 
-3. Link your project:
-```bash
-vercel link
-```
+Le volume `media_data` contient tous les fichiers uploadés. Sauvegardez-le régulièrement.
 
-4. Set environment variables:
-```bash
-vercel env add MONGODB_URI
-vercel env add DATABASE_URI
-vercel env add PAYLOAD_KEY
-vercel env add NEXT_PUBLIC_SERVER_URL
-vercel env add PAYZEN_SHOP_ID
-vercel env add PAYZEN_MODE
-vercel env add PAYZEN_PROD_KEY
-vercel env add PAYZEN_HMAC_PROD_KEY
-vercel env add PAYZEN_PUBLIC_PROD_KEY
-vercel env add BLOB_READ_WRITE_TOKEN
-```
+## Dépannage
 
-5. Deploy:
-```bash
-vercel --prod
-```
+### Erreurs de build
 
-### Option B: Using Vercel Dashboard
+**Erreur : Cannot find module '@payloadcms/...'**
+- Solution : Reconstruisez l'image Docker dans Coolify
 
-1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Click "Add New..." → "Project"
-3. Import your Git repository
-4. Configure project:
-   - Framework Preset: Next.js
-   - Root Directory: ./
-   - Build Command: `npm run build`
-   - Output Directory: `.next`
-   - Install Command: `npm install`
+**Erreur : Database connection failed**
+- Vérifiez que le service PostgreSQL est bien démarré
+- Vérifiez la variable `DATABASE_URL`
+- Vérifiez que le container app peut joindre le container db
 
-5. Add Environment Variables:
+### Erreurs runtime
 
-**Production Variables:**
-```
-MONGODB_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tiki-village
-DATABASE_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tiki-village
-PAYLOAD_KEY=your-very-secure-random-string-here
-NEXT_PUBLIC_SERVER_URL=https://your-domain.vercel.app
-PAYZEN_SHOP_ID=your-shop-id
-PAYZEN_MODE=PRODUCTION
-PAYZEN_PROD_KEY=your-prod-key
-PAYZEN_HMAC_PROD_KEY=your-hmac-prod-key
-PAYZEN_PUBLIC_PROD_KEY=your-public-prod-key
-BLOB_READ_WRITE_TOKEN=vercel_blob_rw_xxx
-```
+**PayZen webhook ne fonctionne pas**
+- Vérifiez l'URL du webhook dans PayZen
+- Vérifiez les variables d'environnement
+- Consultez les logs dans Coolify
 
-6. Click "Deploy"
+**Images qui ne se chargent pas**
+- Vérifiez que le volume media est bien monté
+- Vérifiez les permissions du dossier `/app/media`
 
-## Step 5: Post-Deployment Setup
+## Checklist de sécurité
 
-### 1. Create Admin User
+- [ ] Utiliser un `PAYLOAD_SECRET` fort (32+ caractères)
+- [ ] Mot de passe PostgreSQL fort et unique
+- [ ] Variables PayZen de production uniquement en production
+- [ ] HTTPS activé (automatique avec Coolify + Let's Encrypt)
+- [ ] Sauvegardes automatiques configurées
+- [ ] Audits de sécurité réguliers avec `npm audit`
 
-After first deployment, visit:
-```
-https://your-domain.vercel.app/admin
-```
+## Mise à jour
 
-Create your admin account:
-- Email: admin@tikivillage.pf
-- Password: [Choose a strong password]
-- Role: Admin
+Pour mettre à jour l'application :
 
-### 2. Configure PayZen Webhooks
-
-In your PayZen dashboard, configure webhook URLs:
-
-**Standard Webhook:**
-```
-https://your-domain.vercel.app/api/payzen/notify
-```
-
-**REST API Webhook:**
-```
-https://your-domain.vercel.app/api/payzen/notify-rest
-```
-
-### 3. Seed Initial Data
-
-1. Log into admin panel
-2. Create Categories:
-   - Ateliers (slug: ateliers)
-   - Soirées (slug: soirees)
-   - Mariages (slug: mariages)
-
-3. Create Products (see example in README.md)
-
-4. Configure Globals:
-   - Header: Logo, navigation
-   - Footer: Links, social media
-   - Site Settings: Contact info, currency
-
-## Step 6: Domain Configuration (Optional)
-
-### Using Custom Domain
-
-1. In Vercel dashboard, go to your project
-2. Click "Settings" → "Domains"
-3. Add your custom domain (e.g., www.tikivillage.pf)
-4. Follow Vercel's instructions to configure DNS
-
-**DNS Configuration:**
-Add CNAME record:
-```
-Type: CNAME
-Name: www
-Value: cname.vercel-dns.com
-```
-
-5. Update environment variable:
-```
-NEXT_PUBLIC_SERVER_URL=https://www.tikivillage.pf
-```
-
-## Step 7: Monitoring & Maintenance
-
-### Vercel Analytics
-
-Enable Vercel Analytics in your project settings for:
-- Page views
-- Performance metrics
-- Error tracking
-
-### Database Backups
-
-Configure automated backups in MongoDB Atlas:
-1. Go to your cluster
-2. Click "Backup" tab
-3. Enable Cloud Backup
-
-### Regular Updates
-
-1. Keep dependencies updated:
-```bash
-npm update
-npm audit fix
-```
-
-2. Monitor Payload CMS updates
-3. Check PayZen API changes
-
-## Troubleshooting
-
-### Build Errors
-
-**Error: Cannot find module '@payloadcms/...'**
-- Solution: Run `npm install` and redeploy
-
-**Error: Database connection failed**
-- Check MongoDB Atlas IP whitelist
-- Verify connection string format
-- Ensure network access is configured
-
-### Runtime Errors
-
-**PayZen webhook not working**
-- Verify webhook URL in PayZen dashboard
-- Check environment variables
-- Review Vercel function logs
-
-**Images not loading**
-- Verify Vercel Blob Storage is configured
-- Check `BLOB_READ_WRITE_TOKEN` environment variable
-
-## Security Checklist
-
-- [ ] Use strong `PAYLOAD_KEY` (32+ characters)
-- [ ] Enable 2FA on Vercel account
-- [ ] Restrict MongoDB network access if possible
-- [ ] Use production PayZen credentials only in production
-- [ ] Enable HTTPS redirect in Vercel
-- [ ] Configure CSP headers
-- [ ] Regular security audits with `npm audit`
-
-## Performance Optimization
-
-1. Enable Vercel Edge Functions for API routes
-2. Configure image optimization in `next.config.js`
-3. Use Vercel Edge Caching for static assets
-4. Monitor Core Web Vitals in Vercel Analytics
+1. Poussez vos modifications sur la branche `main`
+2. Coolify détecte automatiquement le changement et redéploie
+3. Ou déclenchez manuellement un redéploiement depuis l'interface Coolify
 
 ## Support
 
-For deployment issues:
-- Vercel: https://vercel.com/support
-- Payload CMS: https://payloadcms.com/docs
-- MongoDB: https://www.mongodb.com/support
-
-For application-specific issues, contact the development team.
+Pour les problèmes de déploiement :
+- Coolify : https://coolify.io/docs
+- Payload CMS : https://payloadcms.com/docs
+- PostgreSQL : https://www.postgresql.org/docs/

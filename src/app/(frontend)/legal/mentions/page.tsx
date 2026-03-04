@@ -44,11 +44,8 @@ export default function MentionsPage() {
             <section>
               <h2 className="text-3xl font-serif text-primary mb-4">Hébergeur</h2>
               <p>
-                <strong>Vercel Inc.</strong><br />
-                440 N Barranca Ave<br />
-                Coyote, CA 95014<br />
-                USA<br />
-                www.vercel.com
+                Auto-hébergé via <strong>Coolify</strong><br />
+                Infrastructure gérée par TahitiZoom
               </p>
             </section>
 

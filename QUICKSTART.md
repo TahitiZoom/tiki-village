@@ -4,8 +4,8 @@ Get up and running with Tiki Village in 5 minutes!
 
 ## Prerequisites
 
-- Node.js 18+ installed
-- PostgreSQL database (local, Vercel Postgres, Neon, or Supabase)
+- Node.js 18+ installed (ou Docker)
+- Docker & Docker Compose (recommandé)
 - Git installed
 
 ## 1. Clone & Install
@@ -30,37 +30,30 @@ Edit `.env` and add your configuration:
 
 ```env
 # Minimum required for local development:
-DATABASE_URL=postgresql://user:password@localhost:5432/tiki_village
+DATABASE_URL=postgresql://tikivillage:changeme@localhost:5432/tikivillage
 PAYLOAD_SECRET=your-secret-key-minimum-32-characters
 NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 ```
 
-### Option A: Local PostgreSQL
+### Option A: Docker Compose (recommandé)
 
-Install PostgreSQL locally:
+```bash
+# Lance l'app + PostgreSQL
+docker compose up -d
+```
+
+### Option B: PostgreSQL local
+
+Installer PostgreSQL localement :
 ```bash
 # macOS
-brew install postgresql && brew services start postgresql
+brew install postgresql@16
+brew services start postgresql@16
 
-# Ubuntu/Debian
-sudo apt-get install postgresql postgresql-contrib
-sudo systemctl start postgresql
-
-# Create database
-createdb tiki_village
+# Créer la base de données
+createuser tikivillage
+createdb -O tikivillage tikivillage
 ```
-
-Or use Docker:
-```bash
-docker run --name postgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=tiki_village -p 5432:5432 -d postgres:16
-```
-
-### Option B: Vercel Postgres / Neon / Supabase (Recommended for production)
-
-1. Go to [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres), [Neon](https://neon.tech), or [Supabase](https://supabase.com)
-2. Create a new PostgreSQL database
-3. Get the connection string
-4. Update `DATABASE_URL` in `.env`
 
 ## 3. Start Development Server
 
@@ -69,8 +62,8 @@ npm run dev
 ```
 
 The application will be available at:
-- 🌐 Frontend: http://localhost:3000
-- 🔐 Admin Panel: http://localhost:3000/admin
+- Frontend: http://localhost:3000
+- Admin Panel: http://localhost:3000/admin
 
 ## 4. Create Admin User
 
@@ -82,7 +75,16 @@ The application will be available at:
 
 ## 5. Add Initial Data
 
-### Create Categories
+### Seed Data (automatic)
+
+Use the seed endpoint:
+```
+GET http://localhost:3000/api/seed-all?token=YOUR_SEED_TOKEN
+```
+
+### Or manually:
+
+#### Create Categories
 
 Go to http://localhost:3000/admin/collections/categories and create:
 
@@ -183,20 +185,21 @@ tiki-village/
 │   ├── lib/              # Utilities
 │   └── payload.config.ts # Payload configuration
 ├── public/               # Static files
+├── Dockerfile
+├── docker-compose.yml
 └── package.json
 ```
 
 ## Troubleshooting
 
-### PostgreSQL Connection Error
+### Erreur de connexion PostgreSQL
 
-**Error:** `ECONNREFUSED` or `connection refused`
+**Error:** `connection refused`
 
 **Solution:**
-- Check PostgreSQL is running: `pg_isready`
-- Verify `DATABASE_URL` in `.env`
-- Try `postgresql://user:password@127.0.0.1:5432/tiki_village` instead
-- Ensure the database exists: `psql -l`
+- Vérifiez que PostgreSQL tourne : `pg_isready`
+- Vérifiez `DATABASE_URL` dans `.env`
+- Avec Docker : `docker compose ps` pour vérifier l'état des containers
 
 ### Port 3000 Already in Use
 
@@ -229,31 +232,27 @@ npm run build
 
 ## Next Steps
 
-1. ✅ Application running locally
-2. ✅ Admin account created
-3. ✅ Initial data added
+1. Application running locally
+2. Admin account created
+3. Initial data added
 
 **Now you can:**
-- 📝 Add more products
-- 🎨 Customize styling
-- 🧪 Test booking flow
-- 📱 Test responsive design
-- 🚀 Deploy to Vercel (see DEPLOYMENT.md)
+- Add more products
+- Customize styling
+- Test booking flow
+- Test responsive design
+- Déployer sur Coolify (voir DEPLOYMENT.md)
 
 ## Resources
 
-- 📖 [Full Documentation](README.md)
-- 🚀 [Deployment Guide](DEPLOYMENT.md)
-- 📊 [Seed Data Guide](SEED_DATA.md)
-- 🔗 [Payload CMS Docs](https://payloadcms.com/docs)
-- 🔗 [Next.js Docs](https://nextjs.org/docs)
+- [Full Documentation](README.md)
+- [Deployment Guide](DEPLOYMENT.md)
+- [Seed Data Guide](SEED_DATA.md)
+- [Payload CMS Docs](https://payloadcms.com/docs)
+- [Next.js Docs](https://nextjs.org/docs)
 
 ## Need Help?
 
 - Check existing GitHub issues
 - Read documentation
 - Contact development team
-
----
-
-**Happy coding! 🌺**

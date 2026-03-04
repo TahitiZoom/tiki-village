@@ -4,7 +4,7 @@
 
 **Project**: Tiki Village E-commerce Platform Migration  
 **From**: WordPress + WooCommerce + WooCommerce Bookings  
-**To**: Payload CMS 3.x + Next.js 15 on Vercel  
+**To**: Payload CMS 3.x + Next.js 15 sur Coolify (auto-hébergé)  
 **Status**: ✅ **85% Complete - Production Ready**  
 **Date**: December 2024
 
@@ -110,13 +110,13 @@ Frontend:
 
 Backend:
 - Payload CMS 3.0.0
-- MongoDB (database)
+- PostgreSQL (database)
 - Lexical (rich text)
 
 Hosting:
-- Vercel (application)
-- MongoDB Atlas (database)
-- Vercel Blob Storage (media)
+- Coolify (auto-hébergement)
+- PostgreSQL 16 (database)
+- Stockage local (media)
 
 Payment:
 - PayZen/OSB (Lyra Network)
@@ -266,7 +266,8 @@ tiki-village/
 │   ├── next.config.js
 │   ├── postcss.config.js
 │   ├── .eslintrc.json
-│   ├── vercel.json
+│   ├── Dockerfile
+│   ├── docker-compose.yml
 │   ├── .env.example
 │   └── .gitignore
 └── README.md
@@ -275,8 +276,8 @@ tiki-village/
 ## Deployment Steps
 
 ### Quick Deployment (5 Steps)
-1. **Database**: Set up MongoDB Atlas cluster
-2. **Vercel**: Connect repository and deploy
+1. **Database**: PostgreSQL (inclus dans docker-compose)
+2. **Coolify**: Connecter le repo et déployer
 3. **Environment**: Configure all env variables
 4. **PayZen**: Configure webhook URLs
 5. **Content**: Add categories and products
@@ -297,9 +298,9 @@ See DEPLOYMENT.md for complete instructions
 ### External Resources
 - [Payload CMS Docs](https://payloadcms.com/docs)
 - [Next.js Docs](https://nextjs.org/docs)
-- [Vercel Docs](https://vercel.com/docs)
+- [Coolify Docs](https://coolify.io/docs)
 - [PayZen Docs](https://docs.lyra.com)
-- [MongoDB Atlas Docs](https://docs.atlas.mongodb.com)
+- [PostgreSQL Docs](https://www.postgresql.org/docs/)
 
 ## Metrics
 
@@ -340,7 +341,7 @@ For questions or support:
 ---
 
 **Project Status**: ✅ **PRODUCTION READY**  
-**Next Step**: Deploy to Vercel and populate content  
+**Next Step**: Déployer sur Coolify et peupler le contenu  
 **Completion**: 85% (Core platform complete)
 
 **Last Updated**: December 2024

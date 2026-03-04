@@ -105,6 +105,10 @@ export const Footer: GlobalConfig = {
           localized: true,
         },
         {
+          name: 'url',
+          type: 'text',
+        },
+        {
           name: 'page',
           type: 'relationship',
           relationTo: 'pages',

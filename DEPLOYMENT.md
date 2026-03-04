@@ -48,14 +48,16 @@ Configurez ces variables dans l'interface Coolify :
 
 ### Base de données
 ```
-DATABASE_URL=postgresql://tikivillage:<mot_de_passe>@db:5432/tikivillage
+DATABASE_URI=postgresql://tikivillage:<mot_de_passe>@db:5432/tikivillage
 POSTGRES_PASSWORD=<mot_de_passe_sécurisé>
 ```
 
 ### Payload CMS
 ```
 PAYLOAD_SECRET=<clé_aléatoire_32_caractères_minimum>
-NEXT_PUBLIC_SERVER_URL=https://votre-domaine.pf
+PAYLOAD_PUBLIC_SERVER_URL=https://votre-domaine.pf
+NEXT_PUBLIC_SITE_URL=https://votre-domaine.pf
+PAYLOAD_API_URL=https://votre-domaine.pf/api
 ```
 
 ### PayZen
@@ -85,7 +87,7 @@ SMTP_ADMIN_EMAIL=accueil@tikivillage.pf
 1. Dans Coolify, allez dans les paramètres du service
 2. Ajoutez votre domaine personnalisé (ex : `www.tikivillage.pf`)
 3. Coolify gère automatiquement les certificats SSL via Let's Encrypt
-4. Mettez à jour `NEXT_PUBLIC_SERVER_URL` avec votre domaine
+4. Mettez à jour `PAYLOAD_PUBLIC_SERVER_URL` et `NEXT_PUBLIC_SITE_URL` avec votre domaine
 
 ## Étape 4 : Post-déploiement
 
@@ -155,7 +157,7 @@ Le volume `media_data` contient tous les fichiers uploadés. Sauvegardez-le rég
 
 **Erreur : Database connection failed**
 - Vérifiez que le service PostgreSQL est bien démarré
-- Vérifiez la variable `DATABASE_URL`
+- Vérifiez la variable `DATABASE_URI`
 - Vérifiez que le container app peut joindre le container db
 
 ### Erreurs runtime

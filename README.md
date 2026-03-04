@@ -109,9 +109,10 @@ cp .env.example .env
 ```
 
 Required variables:
-- `DATABASE_URL` - PostgreSQL connection string
+- `DATABASE_URI` - PostgreSQL connection string
 - `PAYLOAD_SECRET` - Random secret key for Payload
-- `NEXT_PUBLIC_SERVER_URL` - Your site URL
+- `PAYLOAD_PUBLIC_SERVER_URL` - Server URL for Payload
+- `NEXT_PUBLIC_SITE_URL` - Public site URL
 - `PAYZEN_*` - PayZen credentials (contact OSB for details)
 
 4. **Run development server**

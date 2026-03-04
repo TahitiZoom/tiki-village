@@ -30,9 +30,10 @@ Edit `.env` and add your configuration:
 
 ```env
 # Minimum required for local development:
-DATABASE_URL=postgresql://tikivillage:changeme@localhost:5432/tikivillage
+DATABASE_URI=postgresql://tikivillage:changeme@localhost:5432/tikivillage
 PAYLOAD_SECRET=your-secret-key-minimum-32-characters
-NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+PAYLOAD_PUBLIC_SERVER_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 ### Option A: Docker Compose (recommandé)
@@ -198,7 +199,7 @@ tiki-village/
 
 **Solution:**
 - Vérifiez que PostgreSQL tourne : `pg_isready`
-- Vérifiez `DATABASE_URL` dans `.env`
+- Vérifiez `DATABASE_URI` dans `.env`
 - Avec Docker : `docker compose ps` pour vérifier l'état des containers
 
 ### Port 3000 Already in Use

@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+    const baseUrl = process.env.PAYLOAD_PUBLIC_SERVER_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
     const headers = { 'x-seed-token': token, 'Content-Type': 'application/json' }
 
     console.log('Starting complete seed process...')

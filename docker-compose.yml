@@ -5,10 +5,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://tikivillage:${POSTGRES_PASSWORD}@db:5432/tikivillage
+      - DATABASE_URI=postgresql://tikivillage:${POSTGRES_PASSWORD}@db:5432/tikivillage
       - PAYLOAD_SECRET=${PAYLOAD_SECRET}
-      - PAYLOAD_KEY=${PAYLOAD_KEY}
-      - NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
+      - PAYLOAD_PUBLIC_SERVER_URL=${PAYLOAD_PUBLIC_SERVER_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+      - PAYLOAD_API_URL=${PAYLOAD_API_URL:-http://localhost:3000/api}
       - PAYZEN_SHOP_ID=${PAYZEN_SHOP_ID}
       - PAYZEN_MODE=${PAYZEN_MODE:-TEST}
       - PAYZEN_TEST_KEY=${PAYZEN_TEST_KEY}

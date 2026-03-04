@@ -1,266 +1,176 @@
 # Deployment Guide - Tiki Village
 
-This guide will help you deploy the Tiki Village e-commerce platform to Vercel.
+This guide explains how to deploy the Tiki Village platform to Vercel with a Neon PostgreSQL database.
 
 ## Prerequisites
 
-- GitHub account
-- Vercel account (free tier is sufficient for development)
-- MongoDB Atlas account (or other MongoDB hosting)
-- PayZen/OSB account for payment processing
+- GitHub account with the repository pushed
+- [Vercel account](https://vercel.com) (free Hobby tier is sufficient)
+- [Neon account](https://neon.tech) (free tier is sufficient for development)
 
-## Step 1: Database Setup
+---
 
-### MongoDB Atlas
+## Step 1: Neon Database Setup
 
-1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Create a new cluster (free M0 tier is fine for development)
-3. Configure network access:
-   - Click "Network Access" in the left sidebar
-   - Add IP Address: `0.0.0.0/0` (allow from anywhere - Vercel has dynamic IPs)
-4. Create a database user:
-   - Click "Database Access" in the left sidebar
-   - Add New Database User
-   - Choose "Password" authentication
-   - Save the username and password
-5. Get connection string:
-   - Click "Database" in the left sidebar
-   - Click "Connect" on your cluster
-   - Choose "Connect your application"
-   - Copy the connection string
-   - Replace `<password>` with your actual password
+1. Go to [https://console.neon.tech](https://console.neon.tech) and create a free account.
+2. Click **"New Project"** and give it a name (e.g. `tiki-village`).
+3. Choose a region close to your Vercel deployment (e.g. `AWS us-east-1`).
+4. Once created, open the **Connection Details** panel and copy the **Pooled connection string**:
 
-Example connection string:
 ```
-mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tiki-village?retryWrites=true&w=majority
+postgresql://user:password@ep-xxx-yyy.region.aws.neon.tech/neondb?sslmode=require
 ```
 
-## Step 2: Vercel Blob Storage
+> **Important:** Use the **pooled** connection string (port 5432 via the Neon pooler) in production to avoid exhausting PostgreSQL connections in a serverless environment.
 
-1. Go to your Vercel dashboard
-2. Select your project (or create one)
-3. Go to "Storage" tab
-4. Create a new Blob store
-5. Copy the `BLOB_READ_WRITE_TOKEN` from the environment variables
+5. Save this value — you will use it as `DATABASE_URL` in Vercel.
 
-## Step 3: PayZen Configuration
+---
 
-Contact OSB (Lyra Network Polynésie) to get your credentials:
+## Step 2: Vercel Project Setup
 
-Required credentials:
-- `PAYZEN_SHOP_ID` - Your shop identifier
-- `PAYZEN_TEST_KEY` - Test API key
-- `PAYZEN_PROD_KEY` - Production API key
-- `PAYZEN_HMAC_TEST_KEY` - Test HMAC key
-- `PAYZEN_HMAC_PROD_KEY` - Production HMAC key
-- `PAYZEN_PUBLIC_TEST_KEY` - Test public key
-- `PAYZEN_PUBLIC_PROD_KEY` - Production public key
+### Option A: Import from GitHub (recommended)
 
-## Step 4: Deploy to Vercel
+1. Go to [https://vercel.com/new](https://vercel.com/new).
+2. Click **"Import Git Repository"** and select your `tiki-village` repository.
+3. Vercel will detect **Next.js** automatically.
+4. Leave the default build settings (they match `vercel.json`):
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `.next`
+   - **Install Command:** `npm ci`
 
-### Option A: Using Vercel CLI
+5. Add the following **Environment Variables** before deploying:
 
-1. Install Vercel CLI:
+| Variable | Value |
+|---|---|
+| `DATABASE_URL` | Your Neon pooled connection string |
+| `PAYLOAD_SECRET` | A random string of 32+ characters |
+| `NEXT_PUBLIC_SERVER_URL` | `https://your-app.vercel.app` (update after first deploy) |
+| `BLOB_READ_WRITE_TOKEN` | Your Vercel Blob token (see Step 3) |
+
+6. Click **"Deploy"**.
+
+### Option B: Vercel CLI
+
 ```bash
 npm i -g vercel
-```
-
-2. Login to Vercel:
-```bash
 vercel login
-```
-
-3. Link your project:
-```bash
 vercel link
-```
-
-4. Set environment variables:
-```bash
-vercel env add MONGODB_URI
-vercel env add DATABASE_URI
-vercel env add PAYLOAD_KEY
+vercel env add DATABASE_URL
+vercel env add PAYLOAD_SECRET
 vercel env add NEXT_PUBLIC_SERVER_URL
-vercel env add PAYZEN_SHOP_ID
-vercel env add PAYZEN_MODE
-vercel env add PAYZEN_PROD_KEY
-vercel env add PAYZEN_HMAC_PROD_KEY
-vercel env add PAYZEN_PUBLIC_PROD_KEY
 vercel env add BLOB_READ_WRITE_TOKEN
-```
-
-5. Deploy:
-```bash
 vercel --prod
 ```
 
-### Option B: Using Vercel Dashboard
+---
 
-1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Click "Add New..." → "Project"
-3. Import your Git repository
-4. Configure project:
-   - Framework Preset: Next.js
-   - Root Directory: ./
-   - Build Command: `npm run build`
-   - Output Directory: `.next`
-   - Install Command: `npm install`
+## Step 3: Vercel Blob Storage (for media uploads)
 
-5. Add Environment Variables:
+1. In your Vercel project, go to the **Storage** tab.
+2. Click **"Create Database"** → select **Blob**.
+3. Once created, Vercel will automatically add the `BLOB_READ_WRITE_TOKEN` environment variable to your project.
+4. Redeploy the project so the variable is picked up.
 
-**Production Variables:**
-```
-MONGODB_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tiki-village
-DATABASE_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/tiki-village
-PAYLOAD_KEY=your-very-secure-random-string-here
-NEXT_PUBLIC_SERVER_URL=https://your-domain.vercel.app
-PAYZEN_SHOP_ID=your-shop-id
-PAYZEN_MODE=PRODUCTION
-PAYZEN_PROD_KEY=your-prod-key
-PAYZEN_HMAC_PROD_KEY=your-hmac-prod-key
-PAYZEN_PUBLIC_PROD_KEY=your-public-prod-key
-BLOB_READ_WRITE_TOKEN=vercel_blob_rw_xxx
-```
+---
 
-6. Click "Deploy"
+## Step 4: Automatic Deployment via GitHub Actions
+
+The repository includes `.github/workflows/deploy.yml` which automatically deploys to Vercel on every push to `main` and creates preview deployments for pull requests.
+
+### Required GitHub Secrets
+
+Add these secrets in your GitHub repository under **Settings → Secrets and variables → Actions**:
+
+| Secret | How to get it |
+|---|---|
+| `VERCEL_TOKEN` | Vercel dashboard → Account Settings → Tokens → Create |
+| `VERCEL_ORG_ID` | Vercel project → Settings → General → `OrgID` (shown in URL or settings) |
+| `VERCEL_PROJECT_ID` | Vercel project → Settings → General → `Project ID` |
+
+Once the secrets are set, every push to `main` will trigger a production deployment automatically.
+
+---
 
 ## Step 5: Post-Deployment Setup
 
-### 1. Create Admin User
+### Create the first admin user
 
-After first deployment, visit:
+Visit `https://your-app.vercel.app/admin` and create your admin account:
+- **Email:** admin@tikivillage.pf
+- **Password:** (choose a strong password)
+
+Payload CMS will run the database migrations automatically on first boot.
+
+### Configure PayZen Webhooks (optional)
+
+In your PayZen/Lyra dashboard, set the following webhook URLs:
+
 ```
-https://your-domain.vercel.app/admin
-```
-
-Create your admin account:
-- Email: admin@tikivillage.pf
-- Password: [Choose a strong password]
-- Role: Admin
-
-### 2. Configure PayZen Webhooks
-
-In your PayZen dashboard, configure webhook URLs:
-
-**Standard Webhook:**
-```
-https://your-domain.vercel.app/api/payzen/notify
+https://your-app.vercel.app/api/payzen/notify
+https://your-app.vercel.app/api/payzen/notify-rest
 ```
 
-**REST API Webhook:**
-```
-https://your-domain.vercel.app/api/payzen/notify-rest
-```
+### Seed initial data
 
-### 3. Seed Initial Data
+1. Log into the admin panel.
+2. Create Categories: Ateliers, Soirées, Mariages.
+3. Configure Globals: Header, Footer, Site Settings.
 
-1. Log into admin panel
-2. Create Categories:
-   - Ateliers (slug: ateliers)
-   - Soirées (slug: soirees)
-   - Mariages (slug: mariages)
+---
 
-3. Create Products (see example in README.md)
+## Step 6: Custom Domain (optional)
 
-4. Configure Globals:
-   - Header: Logo, navigation
-   - Footer: Links, social media
-   - Site Settings: Contact info, currency
+1. In Vercel, go to your project → **Settings → Domains**.
+2. Add your domain (e.g. `www.tikivillage.pf`).
+3. Configure the DNS CNAME record:
 
-## Step 6: Domain Configuration (Optional)
-
-### Using Custom Domain
-
-1. In Vercel dashboard, go to your project
-2. Click "Settings" → "Domains"
-3. Add your custom domain (e.g., www.tikivillage.pf)
-4. Follow Vercel's instructions to configure DNS
-
-**DNS Configuration:**
-Add CNAME record:
 ```
 Type: CNAME
 Name: www
 Value: cname.vercel-dns.com
 ```
 
-5. Update environment variable:
+4. Update the environment variable:
 ```
 NEXT_PUBLIC_SERVER_URL=https://www.tikivillage.pf
 ```
 
-## Step 7: Monitoring & Maintenance
-
-### Vercel Analytics
-
-Enable Vercel Analytics in your project settings for:
-- Page views
-- Performance metrics
-- Error tracking
-
-### Database Backups
-
-Configure automated backups in MongoDB Atlas:
-1. Go to your cluster
-2. Click "Backup" tab
-3. Enable Cloud Backup
-
-### Regular Updates
-
-1. Keep dependencies updated:
-```bash
-npm update
-npm audit fix
-```
-
-2. Monitor Payload CMS updates
-3. Check PayZen API changes
+---
 
 ## Troubleshooting
 
-### Build Errors
+### Build errors
 
-**Error: Cannot find module '@payloadcms/...'**
-- Solution: Run `npm install` and redeploy
+**`Error: Cannot connect to database`**
+- Verify `DATABASE_URL` is set and uses the Neon pooled endpoint.
+- Ensure `?sslmode=require` is appended to the connection string.
 
-**Error: Database connection failed**
-- Check MongoDB Atlas IP whitelist
-- Verify connection string format
-- Ensure network access is configured
+**`Error: PAYLOAD_SECRET is missing`**
+- Add a 32+ character random string as `PAYLOAD_SECRET` in Vercel environment variables.
 
-### Runtime Errors
-
-**PayZen webhook not working**
-- Verify webhook URL in PayZen dashboard
-- Check environment variables
-- Review Vercel function logs
+### Runtime errors
 
 **Images not loading**
-- Verify Vercel Blob Storage is configured
-- Check `BLOB_READ_WRITE_TOKEN` environment variable
+- Verify `BLOB_READ_WRITE_TOKEN` is configured (see Step 3).
+
+**Too many database connections**
+- Use the Neon **pooled** connection string (not the direct connection string).
+
+---
 
 ## Security Checklist
 
-- [ ] Use strong `PAYLOAD_KEY` (32+ characters)
-- [ ] Enable 2FA on Vercel account
-- [ ] Restrict MongoDB network access if possible
+- [ ] Use a strong `PAYLOAD_SECRET` (32+ random characters)
+- [ ] Use the Neon **pooled** connection string in production
+- [ ] Enable 2FA on Vercel and Neon accounts
 - [ ] Use production PayZen credentials only in production
-- [ ] Enable HTTPS redirect in Vercel
-- [ ] Configure CSP headers
-- [ ] Regular security audits with `npm audit`
+- [ ] Never commit `.env` files to the repository
 
-## Performance Optimization
-
-1. Enable Vercel Edge Functions for API routes
-2. Configure image optimization in `next.config.js`
-3. Use Vercel Edge Caching for static assets
-4. Monitor Core Web Vitals in Vercel Analytics
+---
 
 ## Support
 
-For deployment issues:
-- Vercel: https://vercel.com/support
+- Vercel: https://vercel.com/docs
+- Neon: https://neon.tech/docs
 - Payload CMS: https://payloadcms.com/docs
-- MongoDB: https://www.mongodb.com/support
-
-For application-specific issues, contact the development team.

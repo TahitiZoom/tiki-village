@@ -1,49 +1,27 @@
-# ---- Base ----
-FROM node:22-alpine AS base
-RUN apk add --no-cache libc6-compat
+# ---- Base image ----
+FROM node:20-slim AS base
 WORKDIR /app
 
-# ---- Dependencies ----
+# ---- Install dependencies ----
 FROM base AS deps
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm install --production=false
 
-# ---- Builder ----
-FROM base AS builder
-WORKDIR /app
+# ---- Build ----
+FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
-
 RUN npm run build
 
-# ---- Runner ----
-FROM base AS runner
+# ---- Production image ----
+FROM node:20-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# Copy public assets
-COPY --from=builder /app/public ./public
-
-# Copy standalone output
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Create media upload directory
-RUN mkdir -p /app/media && chown nextjs:nodejs /app/media
-
-USER nextjs
+COPY --from=build /app ./
 
 EXPOSE 3000
+CMD ["npm", "start"]
 
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-
-CMD ["node", "server.js"]

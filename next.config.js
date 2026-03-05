@@ -1,4 +1,5 @@
-const { withPayload } = require('@payloadcms/next/plugin');
+const { withPayload } = require('@payloadcms/next');
+
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

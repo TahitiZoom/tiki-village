@@ -1,19 +1,33 @@
-const { createServer } = require('http')
-const { parse } = require('url')
-const next = require('next')
+const express = require('express');
+const payload = require('payload');
+const next = require('next');
 
-const hostname = process.env.HOSTNAME || '0.0.0.0'
-const port = parseInt(process.env.PORT || '3000', 10)
-const dev = process.env.NODE_ENV !== 'production'
+const dev = process.env.NODE_ENV !== 'production';
+const port = process.env.PORT || 3000;
 
-const app = next({ dev, hostname, port })
-const handle = app.getRequestHandler()
+const nextApp = next({ dev });
+const handle = nextApp.getRequestHandler();
 
-app.prepare().then(() => {
-  createServer(async (req, res) => {
-    const parsedUrl = parse(req.url, true)
-    await handle(req, res, parsedUrl)
-  }).listen(port, hostname, () => {
-    console.log(`> Tiki Village ready on http://${hostname}:${port}`)
-  })
-})
+const app = express();
+
+(async () => {
+  // Initialise Payload
+  await payload.init({
+    secret: process.env.PAYLOAD_SECRET,
+    express: app,
+    mongoURL: process.env.DATABASE_URI,
+    onInit: () => {
+      console.log('Payload CMS initialized');
+    },
+  });
+
+  // Prépare Next.js
+  await nextApp.prepare();
+
+  // Toutes les autres routes → Next.js
+  app.use((req, res) => handle(req, res));
+
+  app.listen(port, () => {
+    console.log(`Server ready on http://localhost:${port}`);
+  });
+})();

@@ -28,6 +28,4 @@ COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 
 EXPOSE 3000
-CMD ["node", "--experimental-default-type=module", "server.js", "--port", "3000", "--hostname", "0.0.0.0"]
-
-
+CMD ["node", "server.js", "--port", "3000", "--hostname", "0.0.0.0"]

@@ -46,10 +46,9 @@ export default buildConfig({
       },
     },
   },
-routes: {
-  admin: '/admin',
-},
-  
+  routes: {
+    admin: '/admin',
+  },
   collections: [
     Users,
     Products,

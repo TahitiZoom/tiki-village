@@ -19,12 +19,12 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
-
+ENV HOST=0.0.0.0
 # Copy only the standalone output (includes server.js + minimal node_modules)
 COPY --from=build /app/.next/standalone ./
 # Copy static assets
 COPY --from=build /app/.next/static ./.next/static
 
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD ["node", "server.js", "--port", "3000", "--hostname", "0.0.0.0"]
 

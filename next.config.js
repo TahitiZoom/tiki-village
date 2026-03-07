@@ -1,8 +1,6 @@
 const { withPayload } = require('@payloadcms/next/withPayload');
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+module.exports = withPayload({
   output: 'standalone',
-};
-
-module.exports = withPayload(nextConfig);
+  reactStrictMode: true,
+});

@@ -4,8 +4,8 @@
   "description": "Tiki Village e-commerce platform with Payload CMS",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "node .next/standalone/server.js",
+    "build": "payload build && next build",
+    "start": "node server.js",
     "lint": "next lint",
     "payload": "payload",
     "generate:types": "payload generate:types"

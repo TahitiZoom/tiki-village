@@ -22,6 +22,9 @@ ENV PORT=3000
 ENV HOST=0.0.0.0
 ENV NODE_OPTIONS=--dns-result-order=ipv4first
 
+# Créer le dossier media pour Payload
+RUN mkdir -p /app/media
+
 # --- Copy Next.js standalone output ---
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static

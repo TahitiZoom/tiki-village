@@ -37,7 +37,7 @@ RUN mkdir -p /app/media
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 
-# Payload config only (NO src/, NO public/)
+# Payload config only
 COPY --from=build /app/payload.config.ts ./payload.config.ts
 
 # Public assets (Next.js needs them)

@@ -15,8 +15,14 @@ RUN npm install --production=false
 # Build
 # -------------------------
 FROM base AS build
+WORKDIR /app
+
+# IMPORTANT : Payload doit être chargé pendant le build
+ENV PAYLOAD_CONFIG_PATH=./payload.config.ts
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
 RUN npm run build
 
 # -------------------------
@@ -28,20 +34,22 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
+ENV PAYLOAD_CONFIG_PATH=./payload.config.ts
 ENV NODE_OPTIONS=--dns-result-order=ipv4first
 
-# Payload needs a persistent media folder
 RUN mkdir -p /app/media
 
 # Next.js standalone output
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 
-# Payload config only
+# Payload admin + config
+COPY --from=build /app/.payload ./.payload
 COPY --from=build /app/payload.config.ts ./payload.config.ts
 
-# Public assets (Next.js needs them)
+# Public assets
 COPY --from=build /app/public ./public
 
 EXPOSE 3000
-CMD ["node", "server.js", "--port", "3000", "--hostname", "0.0.0.0"]
+
+CMD ["node", "server.js"]

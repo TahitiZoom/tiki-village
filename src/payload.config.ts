@@ -30,19 +30,15 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
   admin: {
     user: Users.slug,
+    importMap: {
+      baseDir: path.resolve(dirname),
+      importMapFile: path.resolve(dirname, 'app/admin/importMap.js'),
+    },
     meta: {
       titleSuffix: '- Tiki Village Admin',
       icons: [{ url: '/favicon.ico' }],
       openGraph: {
         images: [{ url: '/og-image.jpg' }],
-      },
-    },
-    components: {
-      graphics: {
-        Logo: {
-          path: '@/app/(admin)/components/AdminLogo',
-          exportName: 'AdminLogo',
-        },
       },
     },
   },

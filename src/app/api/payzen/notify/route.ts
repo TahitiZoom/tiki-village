@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyPayZenSignature } from '@/lib/payzen'
 import { getPayload } from 'payload'
-import config from '@/payload.config'
+import config from '@payload-config'
 
 /**
  * PayZen Standard Webhook Handler

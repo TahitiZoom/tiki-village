@@ -6,21 +6,21 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
 // Collections
-import { Users } from './collections/Users'
-import { Products } from './collections/Products'
-import { Categories } from './collections/Categories'
-import { Bookings } from './collections/Bookings'
-import { Orders } from './collections/Orders'
-import { Pages } from './collections/Pages'
-import { Media } from './collections/Media'
-import { Testimonials } from './collections/Testimonials'
-import { Promotions } from './collections/Promotions'
-import { ContactSubmissions } from './collections/ContactSubmissions'
+import { Users } from './src/collections/Users'
+import { Products } from './src/collections/Products'
+import { Categories } from './src/collections/Categories'
+import { Bookings } from './src/collections/Bookings'
+import { Orders } from './src/collections/Orders'
+import { Pages } from './src/collections/Pages'
+import { Media } from './src/collections/Media'
+import { Testimonials } from './src/collections/Testimonials'
+import { Promotions } from './src/collections/Promotions'
+import { ContactSubmissions } from './src/collections/ContactSubmissions'
 
 // Globals
-import { Header } from './globals/Header'
-import { Footer } from './globals/Footer'
-import { SiteSettings } from './globals/SiteSettings'
+import { Header } from './src/globals/Header'
+import { Footer } from './src/globals/Footer'
+import { SiteSettings } from './src/globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -32,7 +32,7 @@ export default buildConfig({
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
-      importMapFile: path.resolve(dirname, 'app/admin/importMap.js'),
+      importMapFile: path.resolve(dirname, 'src/app/admin/importMap.js'),
     },
     meta: {
       titleSuffix: '- Tiki Village Admin',
@@ -64,7 +64,7 @@ export default buildConfig({
   ],
   editor: lexicalEditor({}),
   typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
+    outputFile: path.resolve(dirname, 'src/payload-types.ts'),
   },
   db: postgresAdapter({
     pool: {

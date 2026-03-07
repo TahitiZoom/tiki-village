@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { getPayload } from 'payload'
-import config from '@/payload.config'
+import config from '@payload-config'
 
 type BookingItem = {
   product: string

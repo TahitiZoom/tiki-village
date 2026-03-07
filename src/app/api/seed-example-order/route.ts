@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
-import config from '@/payload.config'
+import config from '@payload-config'
 
 export async function POST(request: Request) {
   const token = request.headers.get('x-seed-token') || new URL(request.url).searchParams.get('token')

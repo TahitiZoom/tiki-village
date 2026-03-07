@@ -22,10 +22,16 @@ ENV PORT=3000
 ENV HOST=0.0.0.0
 ENV NODE_OPTIONS=--dns-result-order=ipv4first
 
-# Copy only the standalone output (includes server.js + minimal node_modules)
+# --- Copy Next.js standalone output ---
 COPY --from=build /app/.next/standalone ./
-# Copy static assets
 COPY --from=build /app/.next/static ./.next/static
+
+# --- Copy Payload required files ---
+COPY --from=build /app/payload.config.ts ./payload.config.ts
+COPY --from=build /app/src ./src
+
+# --- Copy public assets ---
+COPY --from=build /app/public ./public
 
 EXPOSE 3000
 CMD ["node", "server.js", "--port", "3000", "--hostname", "0.0.0.0"]

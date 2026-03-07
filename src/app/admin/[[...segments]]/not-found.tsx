@@ -1,3 +1,16 @@
-import { generateAdminUI } from '@payloadcms/next/admin';
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
 
-export default generateAdminUI().NotFound;
+import config from '@payload-config'
+import { NotFoundPage } from '@payloadcms/next/views'
+import { importMap } from '../importMap'
+
+type Args = {
+  params: Promise<{ segments: string[] }>
+  searchParams: Promise<{ [key: string]: string | string[] }>
+}
+
+const AdminNotFound = ({ params, searchParams }: Args) =>
+  NotFoundPage({ config, params, searchParams, importMap })
+
+export default AdminNotFound

@@ -1,23 +1,13 @@
-# -------------------------
-# Base image
-# -------------------------
-FROM node:18-slim AS base
+FROM node:20-slim AS base
 WORKDIR /app
 
-# -------------------------
-# Dependencies
-# -------------------------
 FROM base AS deps
 COPY package.json package-lock.json* ./
 RUN npm install --production=false
 
-# -------------------------
-# Build
-# -------------------------
 FROM base AS build
 WORKDIR /app
 
-# Payload doit être chargé pendant le build
 ENV PAYLOAD_CONFIG_PATH=./payload.config.ts
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -25,10 +15,7 @@ COPY . .
 
 RUN npm run build
 
-# -------------------------
-# Production image
-# -------------------------
-FROM node:18-slim AS runner
+FROM node:20-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -39,15 +26,12 @@ ENV NODE_OPTIONS=--dns-result-order=ipv4first
 
 RUN mkdir -p /app/media
 
-# Next.js standalone output
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 
-# Payload admin + config
 COPY --from=build /app/.payload ./.payload
 COPY --from=build /app/payload.config.ts ./payload.config.ts
 
-# Public assets
 COPY --from=build /app/public ./public
 
 EXPOSE 3000

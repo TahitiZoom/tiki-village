@@ -1,7 +1,7 @@
 # -------------------------
 # Base image
 # -------------------------
-FROM node:20-slim AS base
+FROM node:18-slim AS base
 WORKDIR /app
 
 # -------------------------
@@ -17,7 +17,7 @@ RUN npm install --production=false
 FROM base AS build
 WORKDIR /app
 
-# IMPORTANT : Payload doit être chargé pendant le build
+# Payload doit être chargé pendant le build
 ENV PAYLOAD_CONFIG_PATH=./payload.config.ts
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -28,7 +28,7 @@ RUN npm run build
 # -------------------------
 # Production image
 # -------------------------
-FROM node:20-slim AS runner
+FROM node:18-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production

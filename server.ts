@@ -1,17 +1,20 @@
 import express from 'express';
 import payload from 'payload';
-import path from 'path';
+import next from 'next';
 
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// On importe le serveur standalone généré par Next.js
-const nextServer = require('./server.js');
+const nextApp = next({
+  dev: process.env.NODE_ENV !== 'production',
+});
+const nextHandler = nextApp.getRequestHandler();
 
 const start = async () => {
-  // Initialise Payload CMS
+  await nextApp.prepare();
+
   await payload.init({
     secret: process.env.PAYLOAD_SECRET,
     express: app,
@@ -20,8 +23,7 @@ const start = async () => {
     },
   });
 
-  // Next.js standalone gère toutes les routes front
-  app.use((req, res) => nextServer(req, res));
+  app.use((req, res) => nextHandler(req, res));
 
   app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
